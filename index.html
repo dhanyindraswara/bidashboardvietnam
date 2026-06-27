@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sales-Focused BI Blueprint · Premium Meat &amp; Seafood Distributor</title>
+<meta name="description" content="A consultant's read of the MASTERFILE workbook: data assessment, Power BI data model, data-quality work, and a prioritised set of dashboard prototypes — built around Sales as the lead deliverable.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="page">
+
+  <!-- COVER -->
+  <header class="cover">
+    <div class="cover__glow"></div>
+    <div class="cover__inner">
+      <div class="cover__eyebrow">
+        <span class="cover__dot"></span>
+        Power BI Consulting · Data Assessment &amp; Dashboard Blueprint
+      </div>
+      <h1 class="cover__title">Sales-Focused BI Blueprint for a Premium Meat &amp; Seafood Distributor</h1>
+      <p class="cover__lede">A consultant's read of the <strong>MASTERFILE</strong> workbook: what the data is, how to model it in Power BI, the data-quality work it needs, and a prioritised set of dashboard prototypes — built around <strong>Sales</strong> as the lead deliverable.</p>
+      <div class="stat-row">
+        <div class="stat"><div class="stat__num">19</div><div class="stat__label">sheets</div></div>
+        <div class="stat"><div class="stat__num">~172k</div><div class="stat__label">fact rows</div></div>
+        <div class="stat"><div class="stat__num">VND</div><div class="stat__label">currency</div></div>
+        <div class="stat"><div class="stat__num">Star</div><div class="stat__label">target schema</div></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ASSUMPTIONS BANNER -->
+  <div class="banner">
+    <strong class="lead">Reading of the dataset (state your assumptions to the client).</strong>
+    The workbook is already shaped as a Power BI source: master/dimension tables, two transaction fact tables, target tables, and three RLS tables (Users / Pages / Pages for users). Values are in <strong>VND</strong>; product mix is dominated by imported <strong>Wagyu &amp; beef</strong>, plus seafood, pork, lamb, poultry, dairy and pantry. Customers are HORECA + retail (hotels, restaurants, chains, distributors, butchers). All figures below are read directly from the sheets — where a field the brief asked for is absent, it is flagged as <em>missing</em>.
+  </div>
+
+  <div class="doc-grid">
+
+    <!-- NAV -->
+    <aside class="nav-col">
+      <div class="nav-col__title">Contents</div>
+      <nav class="nav">
+        <a href="#s1">1 · Sheet inventory &amp; classification</a>
+        <a href="#s2">2 · Business Overall / executive view</a>
+        <a href="#s3">3 · Department sheets</a>
+        <a href="#s4">4 · Deep dive — Sales</a>
+        <a href="#s5">5 · Data quality check</a>
+        <a href="#s6">6 · Power BI data model</a>
+        <a href="#s7">7 · Dashboard pages</a>
+        <a href="#s8">8 · Wireframes</a>
+        <a href="#s9">9 · DAX measures</a>
+        <a href="#s10">10 · Power Query steps</a>
+        <a href="#s11">11 · Build priority</a>
+        <a href="#s12">12 · Final recommendation</a>
+      </nav>
+    </aside>
+
+    <!-- CONTENT -->
+    <main>
+
+      <!-- SECTION 1 -->
+      <section id="s1" class="section">
+        <div class="section-head">
+          <span class="section-num">01</span>
+          <h2>Sheet inventory &amp; classification</h2>
+        </div>
+        <p class="intro w70">Nineteen sheets, but only a handful are dashboard <em>sources</em> — the rest are dimensions, targets, security, or QA helpers. Classifying them first is what turns a messy workbook into a clean model.</p>
+
+        <div class="table-wrap">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>Sheet</th><th>Rows</th><th>Role in model</th><th>Classification</th><th>Purpose</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="row-fact">
+                <td class="cell-strong">Invoice</td><td class="num">101,604</td>
+                <td><span class="badge badge--fact">FACT</span></td>
+                <td><strong>Sales</strong></td>
+                <td class="note">Invoice-line sales: revenue, COGS, margin per item per customer per day. The core sales engine.</td>
+              </tr>
+              <tr class="row-fact">
+                <td class="cell-strong">Pivot</td><td class="num">68,299</td>
+                <td><span class="badge badge--fact">FACT</span></td>
+                <td><strong>Sales</strong></td>
+                <td class="note">Sales split by transaction <em>type</em> (regular, promo, FOC, replacement, compensation, sponsor, clearing…) with COGS &amp; margin. Explains the "why" behind net revenue.</td>
+              </tr>
+              <tr>
+                <td class="cell-strong">Inventory</td><td class="num">1,713</td>
+                <td><span class="badge badge--snapshot">SNAPSHOT</span></td>
+                <td>Warehouse</td>
+                <td class="note">Current stock by warehouse: on-hand, available, stock value, incoming/outgoing, cost price.</td>
+              </tr>
+              <tr>
+                <td class="cell-strong">Batches</td><td class="num">1,351</td>
+                <td><span class="badge badge--snapshot">SNAPSHOT</span></td>
+                <td>Warehouse</td>
+                <td class="note">Serial/lot/batch positions: in, out, reserved, available by warehouse.</td>
+              </tr>
+              <tr>
+                <td class="cell-strong">Expdate</td><td class="num">10,059</td>
+                <td><span class="badge badge--snapshot">SNAPSHOT</span></td>
+                <td>Warehouse</td>
+                <td class="note">Batch expiry windows (start/end) — critical for perishable meat &amp; seafood (ageing/expiry risk).</td>
+              </tr>
+              <tr>
+                <td class="cell-strong">PO</td><td class="num">210</td>
+                <td><span class="badge badge--snapshot">FACT</span></td>
+                <td>Warehouse / Procurement</td>
+                <td class="note">Open purchase orders: quantity to be received by supplier &amp; warehouse.</td>
+              </tr>
+              <tr>
+                <td class="cell-strong">AR</td><td class="num">839</td>
+                <td><span class="badge badge--snapshot">SNAPSHOT</span></td>
+                <td>Accounting</td>
+                <td class="note">Receivables aging by customer: 0–30 / 31–60 / 61–90 / &gt;90, total &amp; terms.</td>
+              </tr>
+              <tr>
+                <td class="cell-strong">Master-item</td><td class="num">1,038</td>
+                <td><span class="badge badge--dim">DIM</span></td>
+                <td>Product</td>
+                <td class="note">Item master: category, brand, item type, Wagyu grade, temp zone, supplier, unit conversion.</td>
+              </tr>
+              <tr>
+                <td class="cell-strong">Master-debtor</td><td class="num">2,281</td>
+                <td><span class="badge badge--dim">DIM</span></td>
+                <td>Customer</td>
+                <td class="note">Customer master: sales rep, region, channel category, WH location, delivery location.</td>
+              </tr>
+              <tr>
+                <td class="cell-strong">Master-supplier</td><td class="num">60</td>
+                <td><span class="badge badge--dim">DIM</span></td>
+                <td>Supplier</td>
+                <td class="note">Supplier master: cut-off days, location.</td>
+              </tr>
+              <tr>
+                <td class="cell-strong">Targets</td><td class="num">13</td>
+                <td><span class="badge badge--target">TARGET</span></td>
+                <td>Company</td>
+                <td class="note">Monthly revenue &amp; margin targets (company level).</td>
+              </tr>
+              <tr>
+                <td class="cell-strong">Targetsdetails / Reptargets / Regiontargets</td><td class="num">135 / 135 / 61</td>
+                <td><span class="badge badge--target">TARGET</span></td>
+                <td>Sales rep / Region</td>
+                <td class="note">Monthly targets broken down by sales rep and by region — enables actual-vs-target at every level.</td>
+              </tr>
+              <tr>
+                <td class="cell-strong">Forecast</td><td class="num">15</td>
+                <td><span class="badge badge--target">TARGET</span></td>
+                <td>Company</td>
+                <td class="note">Rolling period volumes vs last year (incl. Wagyu-specific quantity).</td>
+              </tr>
+              <tr>
+                <td class="cell-strong">Users / Pages / Pages for users</td><td class="num">22 / 28 / 92</td>
+                <td><span class="badge badge--rls">RLS</span></td>
+                <td>Security</td>
+                <td class="note">Row-level / page-level security mapping — who can see which report page. Keep as a security layer, not a visual source.</td>
+              </tr>
+              <tr>
+                <td class="cell-strong">Check</td><td class="num">2,876</td>
+                <td><span class="badge badge--qa">QA</span></td>
+                <td>Helper</td>
+                <td class="note">Reconciliation worksheet ("new debtor / new item?" vs masters). Do <strong>not</strong> load — replace with a proper Power Query master-matching step.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="grid-2 grid-2--mt">
+          <div class="card">
+            <div class="card__title">Can these connect into one model?</div>
+            <p>Yes — and they were clearly built to. <strong>Invoice</strong> and <strong>Pivot</strong> both carry item + customer + date keys that join to <strong>Master-item</strong> and <strong>Master-debtor</strong>; Inventory/PO/Batches join on item + supplier + warehouse. A single shared <strong>Date</strong> table ties facts and targets together. This is a textbook star schema waiting to be wired up.</p>
+          </div>
+          <div class="card">
+            <div class="card__title">⚠ The one catch to confirm</div>
+            <p>Keys are stored as <em>"code, name"</em> strings (e.g. <code class="code-chip">100073, Salt n Pepper</code>). They must be split to a clean numeric code before relationships will hold. Confirm with the client that the leading code is the true primary key in every master.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 2 -->
+      <section id="s2" class="section">
+        <div class="section-head">
+          <span class="section-num">02</span>
+          <h2>Business Overall — the executive view</h2>
+        </div>
+        <p class="intro">There is no single "Business Overall" sheet, but the executive layer is fully derivable: <strong>Invoice</strong> + <strong>Pivot</strong> give revenue, margin and volume; the <strong>Targets</strong> family gives the goalposts; <strong>AR</strong> adds cash health; <strong>Inventory</strong> adds asset/stock health. An executive dashboard is a roll-up of the department facts against target — not a new data source.</p>
+
+        <div class="grid-2" style="margin-bottom:22px">
+          <div class="card">
+            <div class="label-mono">Company KPIs</div>
+            <ul class="list-kpi">
+              <li>Total Revenue, Total Margin, <strong>Margin %</strong> (VND)</li>
+              <li>Revenue &amp; Margin <strong>vs Target</strong> (achievement %)</li>
+              <li>YoY / vs Last Year growth (Forecast sheet supports this)</li>
+              <li>Total Volume (kg) and Wagyu volume share</li>
+              <li>Active customers &amp; new-vs-returning split</li>
+              <li>Receivables outstanding &amp; % overdue (&gt;90 days)</li>
+              <li>Stock value on hand &amp; expiry-at-risk value</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="label-mono">Executive pages to build</div>
+            <ul class="list-kpi">
+              <li><strong>Company Scorecard</strong> — KPI band + revenue-vs-target trend</li>
+              <li><strong>Department Comparison</strong> — Sales / Warehouse / AR side by side</li>
+              <li><strong>Region &amp; Channel</strong> — performance map of North/Central/South + channel mix</li>
+              <li><strong>Cash &amp; Stock Health</strong> — AR aging + inventory value &amp; expiry</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="callout">
+          <div class="callout__title">Management insights this layer unlocks</div>
+          <p>Are we hitting the monthly revenue &amp; margin target? Which region or channel is carrying (or dragging) the number? Is growth coming from volume or price/mix? How much margin are we giving away through promo / FOC / compensation (visible only in <strong>Pivot</strong>)? Is cash tied up in overdue receivables or in slow, near-expiry stock? Those five questions are the whole executive story.</p>
+        </div>
+      </section>
+
+      <!-- SECTION 3 -->
+      <section id="s3" class="section">
+        <div class="section-head">
+          <span class="section-num">03</span>
+          <h2>Department sheets — practical read</h2>
+        </div>
+        <p class="intro">Concise per department (Sales gets its own deep dive in §4).</p>
+
+        <div class="stack">
+
+          <!-- Accounting -->
+          <div class="dept">
+            <div class="dept__head">
+              <h3>Accounting — <span class="accent-blue">AR</span></h3>
+              <span class="dept__count">839 customers</span>
+            </div>
+            <div class="dept__cols">
+              <div><div class="col-label">Key columns</div><span>Classification (HOT/RES…), 0–30, 31–60, 61–90, &gt;90, Total amount, Total terms</span></div>
+              <div><div class="col-label">KPIs</div><span>Total AR, % overdue, &gt;90-day exposure, avg collection terms, DSO proxy, top debtors</span></div>
+              <div><div class="col-label">Visuals / questions</div><span>Aging stacked bar, overdue heat table, top-20 debtors. "Who owes us, how old, who's a credit risk?"</span></div>
+            </div>
+            <div class="dept__missing"><strong>Missing for full accounting:</strong> no GL / P&amp;L, no AP (payables), no cash/bank, no invoice payment dates. AR aging is a snapshot — there's no transaction history to compute true DSO.</div>
+          </div>
+
+          <!-- Warehouse -->
+          <div class="dept">
+            <div class="dept__head">
+              <h3>Warehouse — <span class="accent-blue">Inventory · Batches · Expdate · PO</span></h3>
+            </div>
+            <div class="dept__cols">
+              <div><div class="col-label">Key columns</div><span>Warehouse, Stock, Available, Stock value, Cost price, Reserved, lot In/Out, expiry Start/End, PO qty to receive</span></div>
+              <div><div class="col-label">KPIs</div><span>Stock value by WH, available vs reserved, near-expiry value, items below zero, open PO value, days-to-cover</span></div>
+              <div><div class="col-label">Visuals / questions</div><span>Stock-value treemap, expiry calendar/aging, negative-stock exception list, PO pipeline. "What's at risk of expiring? Where's cash frozen in stock?"</span></div>
+            </div>
+            <div class="dept__missing"><strong>Missing:</strong> no dated stock-movement ledger → inventory is a current snapshot only (no historical stock trend, no true turnover unless joined to Invoice volume). Several negative stock values &amp; stock-value figures need a sign/quality review.</div>
+          </div>
+
+          <!-- Procurement / supplier -->
+          <div class="dept dept--product">
+            <div class="dept__head">
+              <h3>Supply / Product masters — <span class="accent-green">Master-item · Master-supplier</span></h3>
+            </div>
+            <div class="dept__body">Dimensions, not departments — but rich: <strong>16 categories</strong> (Beef, Wagyu, Seafood, Pork, Lamb, Poultry, Dairy, Pantry…), <strong>171 brands</strong>, item type, Wagyu grade, temp zone, supplier cut-off days. These power every "by product / by brand / by supplier" slice across all dashboards. Worth a small <strong>Supplier scorecard</strong> later (lead time, on-time PO, margin by supplier).</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- SECTION 4 — SALES DEEP DIVE -->
+      <section id="s4" class="section">
+        <div class="section-head">
+          <span class="section-num">04</span>
+          <h2>Deep dive — Sales <span class="pill-priority">priority</span></h2>
+        </div>
+        <p class="intro w74">Sales is the strongest part of this dataset — two complementary fact tables, full customer &amp; product dimensions, and targets at company / rep / region level. Below: what each analysis the brief asked for can or cannot be answered with the data in hand.</p>
+
+        <!-- two fact tables explainer -->
+        <div class="grid-2 fact-grid" style="margin-bottom:24px">
+          <div class="fact-card">
+            <div class="fact-card__label">Fact A · Invoice (101,604 rows)</div>
+            <p>Gross invoice lines. Fields: INVOICE#, DATE, DEBTOR, ITEM, INVOICE REF, QUANTITY, PRICE/UNIT, REVENUE, COGS (per unit), COGS Total, MARGIN TOTAL. This is your <strong>order &amp; revenue</strong> grain.</p>
+          </div>
+          <div class="fact-card">
+            <div class="fact-card__label">Fact B · Pivot (68,299 rows)</div>
+            <p>Net sales decomposed by <strong>transaction type</strong>: regular sales, promo, FOC (free-of-charge), replacement, compensation, sponsor, clearing, received-difference, authorities — each with VND &amp; quantity, plus COGS &amp; margin. This is how you measure <strong>revenue leakage</strong>.</p>
+          </div>
+        </div>
+        <div class="note-warm mb">
+          <strong>Decide the relationship up front:</strong> Invoice and Pivot overlap. Confirm with the client whether <em>Pivot</em> is the authoritative net-sales table (regular + adjustments) and <em>Invoice</em> is gross billing — or vice-versa. Don't sum both into one "Total Sales" or you'll double-count. My recommended default: <strong>Pivot = net sales / margin truth</strong>, <strong>Invoice = order &amp; pricing detail.</strong>
+        </div>
+
+        <!-- coverage matrix -->
+        <h3 class="sub">What we can answer — coverage matrix</h3>
+        <div class="table-wrap" style="margin-bottom:26px">
+          <table class="tbl tbl--narrow">
+            <thead><tr>
+              <th>Sales analysis</th><th>Status</th><th>Source &amp; note</th>
+            </tr></thead>
+            <tbody>
+              <tr><td>Revenue trend (D/M/Q/Y)</td><td><span class="status-yes">✓ Yes</span></td><td class="note">DATE on both facts. Needs a Date table.</td></tr>
+              <tr><td>Sales target vs actual</td><td><span class="status-yes">✓ Yes</span></td><td class="note">Targets at company, rep &amp; region level. <em>Targets only cover 2025-06 → 2026-05.</em></td></tr>
+              <tr><td>Product / category / brand</td><td><span class="status-yes">✓ Yes</span></td><td class="note">Master-item: category, brand, item type, Wagyu grade.</td></tr>
+              <tr><td>Customer performance &amp; contribution</td><td><span class="status-yes">✓ Yes</span></td><td class="note">DEBTOR key + Master-debtor channel/category.</td></tr>
+              <tr><td>Region / area performance</td><td><span class="status-yes">✓ Yes</span></td><td class="note">Region Sales (North/Central/South + Retail/Foodshop channels).</td></tr>
+              <tr><td>Salesperson / team</td><td><span class="status-yes">✓ Yes</span></td><td class="note">Salesrep on Master-debtor + rep targets. <em>Names need de-duping (trailing spaces).</em></td></tr>
+              <tr><td>Order volume / count</td><td><span class="status-yes">✓ Yes</span></td><td class="note">Distinct INVOICE# = orders; QUANTITY (kg) = volume.</td></tr>
+              <tr><td>Avg order / transaction value</td><td><span class="status-yes">✓ Yes</span></td><td class="note">Revenue ÷ distinct INVOICE#.</td></tr>
+              <tr><td>Margin leakage (promo/FOC/comp)</td><td><span class="status-yes">✓ Yes — standout</span></td><td class="note">Pivot transaction-type columns. Rare in raw sales data — a real selling point.</td></tr>
+              <tr><td>Sales growth %</td><td><span class="status-partial">◐ Partial</span></td><td class="note">MoM within the data is fine; YoY needs ≥13 months — confirm history depth (data appears to start 2025-01).</td></tr>
+              <tr><td>Repeat / new customer</td><td><span class="status-partial">◐ Derivable</span></td><td class="note">First-purchase date via DAX (no flag in data). Solid if history is long enough.</td></tr>
+              <tr><td>Sales pipeline / quotes / discounts list price</td><td><span class="status-missing">✗ Missing</span></td><td class="note">No CRM/quote data, no list-vs-net price, no order-status funnel. Sales is invoiced-only.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Sales KPI catalogue -->
+        <h3 class="sub">Sales KPI catalogue</h3>
+        <div class="kpi-grid">
+          <div class="kpi"><div class="kpi__tag">core</div><div class="kpi__name">Total Revenue (VND)</div></div>
+          <div class="kpi"><div class="kpi__tag">core</div><div class="kpi__name">Total Margin &amp; Margin %</div></div>
+          <div class="kpi"><div class="kpi__tag">core</div><div class="kpi__name">Volume (kg)</div></div>
+          <div class="kpi"><div class="kpi__tag">core</div><div class="kpi__name">Orders (distinct invoices)</div></div>
+          <div class="kpi"><div class="kpi__tag">efficiency</div><div class="kpi__name">Avg Order Value</div></div>
+          <div class="kpi"><div class="kpi__tag">efficiency</div><div class="kpi__name">Avg Price / kg</div></div>
+          <div class="kpi"><div class="kpi__tag">target</div><div class="kpi__name">Target Achievement %</div></div>
+          <div class="kpi"><div class="kpi__tag">growth</div><div class="kpi__name">MoM / YoY Growth %</div></div>
+          <div class="kpi"><div class="kpi__tag">mix</div><div class="kpi__name">Sales Contribution %</div></div>
+          <div class="kpi"><div class="kpi__tag">mix</div><div class="kpi__name">Wagyu Revenue Share</div></div>
+          <div class="kpi"><div class="kpi__tag">leakage</div><div class="kpi__name">Promo + FOC % of Sales</div></div>
+          <div class="kpi"><div class="kpi__tag">customer</div><div class="kpi__name">Active &amp; Repeat Customers</div></div>
+        </div>
+
+        <!-- opportunities -->
+        <div class="grid-2" style="margin-top:10px">
+          <div class="split split--good">
+            <div class="split__title">Opportunities visible in the data</div>
+            <ul>
+              <li>Quantify <strong>margin leakage</strong> (promo/FOC/compensation) by customer — likely a quick profit win.</li>
+              <li>Identify <strong>top-20 customers</strong> driving most margin (HORECA names like Metropole, InterContinental appear in AR).</li>
+              <li>Push <strong>Wagyu mix</strong> — highest price/kg category — where volume is low.</li>
+              <li>Rank <strong>sales reps</strong> on margin %, not just revenue.</li>
+            </ul>
+          </div>
+          <div class="split split--risk">
+            <div class="split__title">Risks / issues visible in the data</div>
+            <ul>
+              <li><strong>Negative net-sales values</strong> in Pivot — sign convention must be confirmed (returns vs sales).</li>
+              <li>Targets <strong>don't cover Jan–May 2025</strong> while invoices do → achievement % will look blank.</li>
+              <li>Sales-rep names <strong>"Ha" vs "Ha "</strong>, <strong>"Hoa" vs "Hoa "</strong> split a rep into two.</li>
+              <li>Customer concentration / credit risk overlaps with overdue AR.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 5 -->
+      <section id="s5" class="section">
+        <div class="section-head">
+          <span class="section-num">05</span>
+          <h2>Data quality check</h2>
+        </div>
+        <p class="intro">Real issues found while reading the sheets — each with the Power Query fix. Clean these before modelling or every measure inherits the error.</p>
+
+        <div class="table-wrap">
+          <table class="tbl tbl--md">
+            <thead><tr>
+              <th>Issue</th><th>Where</th><th>Severity</th><th>Power Query fix</th>
+            </tr></thead>
+            <tbody>
+              <tr><td><strong>Composite keys as "code, name"</strong></td><td>Invoice DEBTOR &amp; ITEM, Pivot Customer/Item</td><td><span class="sev-high">High</span></td><td class="note">Split column by first comma → numeric <em>Code</em> + text <em>Name</em>; relate on Code.</td></tr>
+              <tr><td><strong>Trailing-space duplicates</strong> ("Ha "/"Ha", "Hoa "/"Hoa", "Luyen ")</td><td>Master-debtor Salesrep</td><td><span class="sev-high">High</span></td><td class="note">Trim + Clean; then Capitalize Each Word to standardise.</td></tr>
+              <tr><td><strong>Category typo &amp; overlap</strong> ("Diary" vs "Dairy &amp; Egg"; "Beef"/"Wagyu"/"Mr. T. Beef")</td><td>Master-item Category</td><td><span class="sev-med">Med</span></td><td class="note">Map via a small reference table to a clean category list.</td></tr>
+              <tr><td><strong>Temp-zone case/space chaos</strong> (d, D, f, F, "F ", c, C)</td><td>Master-item Temp zone</td><td><span class="sev-med">Med</span></td><td class="note">Upper + Trim → map D/F/C to Dry/Frozen/Chilled.</td></tr>
+              <tr><td><strong>Item-type inconsistency</strong> ("Flank"/"FLank", "Striploin"/"Striploin ", "Oyster blade"/"Oyster Blade")</td><td>Master-item Itemtype</td><td><span class="sev-med">Med</span></td><td class="note">Trim + Proper-case; dedupe a curated list.</td></tr>
+              <tr><td><strong>Date stored at 17:00 UTC</strong> (Vietnam UTC+7 → risk of day-shift)</td><td>Invoice/Pivot DATE</td><td><span class="sev-high">High</span></td><td class="note">Convert to Date (drop time) after confirming timezone; type = Date.</td></tr>
+              <tr><td><strong>Negative / blank values &amp; sign convention</strong></td><td>Pivot net-sales; Inventory Stock value</td><td><span class="sev-high">High</span></td><td class="note">Confirm whether negatives = returns; standardise sign; replace null with 0 only where additive.</td></tr>
+              <tr><td><strong>Empty / unclear columns</strong> (blank1, blank2; Check sheet)</td><td>Pivot, Check, Expdate (null headers)</td><td><span class="sev-med">Med</span></td><td class="note">Remove empty columns; rename null headers; don't load the Check QA sheet.</td></tr>
+              <tr><td><strong>Mixed-language headers</strong> ("WH locatie", Debtor/Creditor)</td><td>Pivot, PO</td><td><span class="sev-low">Low</span></td><td class="note">Rename to consistent English for report-facing fields.</td></tr>
+              <tr><td><strong>Wrong data types</strong> (numbers/dates read as text on import)</td><td>All sheets</td><td><span class="sev-med">Med</span></td><td class="note">Set explicit types as the first applied step on every query.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="foot-note">Duplicate <em>records</em>: check Invoice for repeated INVOICE#+ITEM+QTY lines (some appear legitimately split, e.g. qty 1 then qty 8 on the same invoice) — verify with the client before de-duplicating.</p>
+      </section>
+
+      <!-- SECTION 6 -->
+      <section id="s6" class="section">
+        <div class="section-head">
+          <span class="section-num">06</span>
+          <h2>Recommended Power BI data model</h2>
+        </div>
+        <p class="intro"><strong>Star schema</strong>, single direction, one shared Date table. Facts in the middle, conformed dimensions around them, targets attached at their natural grain.</p>
+
+        <!-- schema diagram -->
+        <div class="schema">
+          <div class="schema__grid">
+            <!-- left dims -->
+            <div class="schema__col">
+              <div class="node node--dim"><strong>Dim_Customer</strong><br><span>Master-debtor · rep, region, channel</span></div>
+              <div class="node node--dim"><strong>Dim_Product</strong><br><span>Master-item · cat, brand, grade</span></div>
+              <div class="node node--dim"><strong>Dim_Supplier</strong><br><span>Master-supplier</span></div>
+            </div>
+            <!-- center facts -->
+            <div class="schema__col schema__col--center">
+              <div class="node node--fact node--sales"><strong>Fact_Sales (Pivot)</strong><br><span>net sales · margin · type</span></div>
+              <div class="node node--fact node--invoice"><strong>Fact_Invoice</strong><br><span>orders · price · qty</span></div>
+              <div class="node node--fact node--ops"><strong>Fact_Inventory</strong> · <strong>Fact_PO</strong><br><span>stock · expiry · receipts</span></div>
+              <div class="node node--fact node--ar"><strong>Fact_AR</strong> <span>(aging snapshot)</span></div>
+            </div>
+            <!-- right -->
+            <div class="schema__col">
+              <div class="node node--date"><strong>Dim_Date</strong><br><span>marked date table</span></div>
+              <div class="node node--date"><strong>Targets</strong><br><span>company / rep / region</span></div>
+              <div class="node node--rls"><strong>RLS_Users / Pages</strong><br><span>security layer</span></div>
+            </div>
+          </div>
+          <div class="schema__caption">all relationships single-direction → from dimension (1) to fact (∗) · Date filters every fact &amp; target</div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card__title" style="margin-bottom:8px">Keys &amp; relationships</div>
+            <ul class="list-kpi" style="font-size:13px;line-height:1.75">
+              <li><strong>Dim_Customer[DebtorCode]</strong> 1→∗ Fact_Sales / Fact_Invoice / Fact_AR</li>
+              <li><strong>Dim_Product[Itemcode]</strong> 1→∗ Fact_Sales / Invoice / Inventory / PO</li>
+              <li><strong>Dim_Supplier[SupplierCode]</strong> 1→∗ Inventory / PO / Product</li>
+              <li><strong>Dim_Date[Date]</strong> 1→∗ every fact &amp; every target table</li>
+              <li>Targets join on Date (+ rep/region key) — at month grain, so use a Month key or relate Date(month-start).</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card__title" style="margin-bottom:8px">Modelling decisions</div>
+            <ul class="list-kpi" style="font-size:13px;line-height:1.75">
+              <li>Build a dedicated <strong>Dim_Date</strong> (CALENDAR), mark as date table — don't rely on auto date/time.</li>
+              <li>Pick <strong>one</strong> sales fact as the revenue source of truth (recommend Pivot); keep the other for detail, don't double-count.</li>
+              <li>Inventory &amp; AR are <strong>snapshots</strong> — relate to Date as "as-of", don't sum across time.</li>
+              <li>RLS tables drive security roles, not visuals — wire Users→Pages with role filters.</li>
+              <li>Region Sales mixes geography + channel — split into <strong>Region</strong> and <strong>Channel</strong> attributes.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 7 -->
+      <section id="s7" class="section">
+        <div class="section-head">
+          <span class="section-num">07</span>
+          <h2>Dashboard pages</h2>
+        </div>
+        <p class="intro">Four dashboards. Sales is specced deepest (it's the lead prototype); others are scoped to what the data supports today.</p>
+
+        <!-- B. SALES (lead) -->
+        <div class="dash dash--lead">
+          <div class="dash__head">
+            <span class="dash__badge dash__badge--lead">B</span>
+            <h3>Sales Performance Dashboard</h3>
+            <span class="dash__tag dash__tag--lead">lead prototype · multi-page</span>
+          </div>
+          <p class="dash__obj"><strong>Objective:</strong> deeply analyse sales performance, profitability and growth across product, customer, region and rep. <strong>Target user:</strong> Sales Director, regional managers, commercial team.</p>
+          <div class="dash__cols-2">
+            <div>
+              <div class="minilabel--maroon">Pages</div>
+              <ul>
+                <li><strong>B1 Sales Overview</strong> — KPIs, revenue-vs-target trend, region &amp; channel mix</li>
+                <li><strong>B2 Product &amp; Brand</strong> — category/brand/Wagyu performance, top &amp; bottom items</li>
+                <li><strong>B3 Customer</strong> — top customers, contribution, new vs repeat, concentration</li>
+                <li><strong>B4 Rep &amp; Region</strong> — rep leaderboard, target achievement, region map</li>
+                <li><strong>B5 Margin &amp; Leakage</strong> — promo / FOC / compensation drain by customer</li>
+              </ul>
+              <div class="minilabel--maroon">Filters / slicers</div>
+              <p>Date range · Region · Channel · Category/Brand · Sales rep · Customer · Transaction type</p>
+            </div>
+            <div>
+              <div class="minilabel--maroon">Key KPIs</div>
+              <p>Revenue · Margin · Margin % · Volume (kg) · Orders · AOV · Target Achievement % · MoM/YoY Growth · Wagyu share · Promo+FOC %</p>
+              <div class="minilabel--maroon">Recommended visuals</div>
+              <p>KPI cards w/ target deltas · revenue-vs-target combo (column + line) · region map · category treemap · rep bar leaderboard · top/bottom-N tables · margin-leakage waterfall · customer scatter (revenue × margin %)</p>
+              <div class="minilabel--maroon">Insight expected</div>
+              <p>Where growth/margin is won or lost, who the profit-driving customers &amp; reps are, and how much margin promotions cost.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- A. Overall -->
+        <div class="dash dash--exec">
+          <div class="dash__head">
+            <span class="dash__badge dash__badge--exec">A</span>
+            <h3>Business Overall (Executive) Dashboard</h3>
+          </div>
+          <p class="dash__obj"><strong>Objective:</strong> one-screen health of the company. <strong>Target user:</strong> GM / owners / board.</p>
+          <div class="dash__cols-3">
+            <div><div class="minilabel">KPIs</div>Revenue &amp; Margin vs target · Growth % · Volume · AR outstanding · Stock value</div>
+            <div><div class="minilabel">Visuals</div>KPI band · trend vs target · region/channel mix · department comparison · cash &amp; stock tiles</div>
+            <div><div class="minilabel">Filters</div>Date · Region · Channel</div>
+          </div>
+        </div>
+
+        <!-- C. Accounting -->
+        <div class="dash">
+          <div class="dash__head">
+            <span class="dash__badge">C</span>
+            <h3>Accounting / Receivables Dashboard</h3>
+            <span class="dash__tag dash__tag--ar">AR-only scope</span>
+          </div>
+          <p class="dash__obj"><strong>Objective:</strong> monitor receivables &amp; credit risk. <strong>Target user:</strong> Finance / collections.</p>
+          <div class="dash__cols-3">
+            <div><div class="minilabel">KPIs</div>Total AR · % overdue · &gt;90-day exposure · avg terms · top debtors</div>
+            <div><div class="minilabel">Visuals</div>Aging stacked bar · overdue heat table · top-20 debtors · risk by channel</div>
+            <div><div class="minilabel">Filters</div>Classification · Channel · Aging bucket</div>
+          </div>
+        </div>
+
+        <!-- D. Warehouse -->
+        <div class="dash" style="margin-bottom:0">
+          <div class="dash__head">
+            <span class="dash__badge">D</span>
+            <h3>Warehouse / Inventory Dashboard</h3>
+          </div>
+          <p class="dash__obj"><strong>Objective:</strong> protect stock value &amp; manage expiry. <strong>Target user:</strong> Ops / warehouse / procurement.</p>
+          <div class="dash__cols-3">
+            <div><div class="minilabel">KPIs</div>Stock value by WH · available vs reserved · near-expiry value · negative-stock count · open PO value</div>
+            <div><div class="minilabel">Visuals</div>Stock-value treemap · expiry aging calendar · exception list · PO pipeline timeline</div>
+            <div><div class="minilabel">Filters</div>Warehouse · Category · Supplier · Expiry window</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 8 -->
+      <section id="s8" class="section">
+        <div class="section-head">
+          <span class="section-num">08</span>
+          <h2>Wireframes</h2>
+        </div>
+        <p class="intro">Low-fi layout sketches. The Sales Overview is rendered client-ready; the others are structural. Grey blocks = visuals to be built.</p>
+
+        <!-- SALES B1 WIREFRAME (client-ready) -->
+        <div class="wf-label">B1 · Sales Overview — client-ready</div>
+        <div class="wf">
+          <!-- header bar -->
+          <div class="wf__bar">
+            <div class="wf__title">Sales Performance · Overview</div>
+            <div class="wf__slicers">
+              <span class="slicer">Date ▾</span>
+              <span class="slicer">Region ▾</span>
+              <span class="slicer">Channel ▾</span>
+              <span class="slicer">Rep ▾</span>
+            </div>
+          </div>
+          <!-- KPI row -->
+          <div class="wf__kpis">
+            <div class="wf-tile"><div class="wf-tile__label">Revenue</div><div class="bar-lg"></div><div class="bar-sm fill-green" style="width:55%"></div></div>
+            <div class="wf-tile"><div class="wf-tile__label">Margin %</div><div class="bar-lg"></div><div class="bar-sm fill-green" style="width:45%"></div></div>
+            <div class="wf-tile"><div class="wf-tile__label">vs Target</div><div class="bar-lg"></div><div class="bar-sm fill-pink" style="width:60%"></div></div>
+            <div class="wf-tile"><div class="wf-tile__label">Orders / AOV</div><div class="bar-lg"></div><div class="bar-sm fill-grey" style="width:50%"></div></div>
+            <div class="wf-tile"><div class="wf-tile__label">Wagyu share</div><div class="bar-lg"></div><div class="bar-sm fill-grey" style="width:40%"></div></div>
+          </div>
+          <!-- main row -->
+          <div class="wf__main">
+            <div class="wf-panel wf-panel--chart">
+              <div class="wf-panel__label">Revenue vs Target — monthly (column + line)</div>
+              <div class="wf-bars">
+                <div style="height:55%"></div>
+                <div style="height:72%"></div>
+                <div style="height:48%"></div>
+                <div style="height:80%"></div>
+                <div style="height:65%"></div>
+                <div style="height:90%"></div>
+                <div style="height:70%"></div>
+              </div>
+            </div>
+            <div class="wf-panel wf-panel--donut">
+              <div class="wf-panel__label">Region / channel mix</div>
+              <div class="donut-wrap"><div class="donut"></div></div>
+            </div>
+          </div>
+          <!-- bottom row -->
+          <div class="wf__bottom">
+            <div class="wf-panel wf-panel--sm">
+              <div class="wf-panel__label">Top categories (bar)</div>
+              <div class="wf-hbars">
+                <div style="width:92%"></div>
+                <div style="width:74%"></div>
+                <div style="width:58%"></div>
+                <div style="width:41%"></div>
+                <div style="width:30%"></div>
+              </div>
+            </div>
+            <div class="wf-panel wf-panel--sm">
+              <div class="wf-panel__label">Rep leaderboard (table)</div>
+              <div class="wf-rows">
+                <div class="wf-row"><div class="a"></div><div class="b"></div></div>
+                <div class="wf-row"><div class="a"></div><div class="b"></div></div>
+                <div class="wf-row"><div class="a"></div><div class="b"></div></div>
+                <div class="wf-row"><div class="a"></div><div class="b"></div></div>
+              </div>
+            </div>
+            <div class="wf-panel wf-panel--sm">
+              <div class="wf-panel__label">Customer scatter (rev × margin%)</div>
+              <div class="wf-scatter">
+                <span class="dot dot--maroon" style="left:18%;top:55%;width:8px;height:8px"></span>
+                <span class="dot dot--maroon" style="left:42%;top:30%;width:11px;height:11px"></span>
+                <span class="dot dot--blue" style="left:62%;top:60%;width:7px;height:7px"></span>
+                <span class="dot dot--green" style="left:78%;top:22%;width:13px;height:13px"></span>
+                <span class="dot dot--orange" style="left:30%;top:70%;width:6px;height:6px"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- text wireframes for other pages -->
+        <div class="grid-2">
+          <div class="wf-text">
+            <div class="wf-text__title">B5 · Margin &amp; Leakage <span class="muted">(Sales — signature page)</span></div>
+            <pre>TOP   ▸ Net Sales · Gross Sales · Leakage % · FOC value
+MID   ▸ Waterfall: Gross → promo → FOC → comp → Net
+      ▸ Leakage by customer (bar, top offenders)
+BOT   ▸ Detail table: customer × type × VND × margin
+      ▸ Drillthrough → customer 360</pre>
+          </div>
+          <div class="wf-text">
+            <div class="wf-text__title">A · Executive Overview</div>
+            <pre>TOP   ▸ Revenue/Margin vs target · Growth · AR · Stock
+MID   ▸ Revenue-vs-target trend (combo)
+      ▸ Region map · channel mix
+BOT   ▸ Department comparison · cash &amp; stock tiles</pre>
+          </div>
+          <div class="wf-text">
+            <div class="wf-text__title">C · Accounting / AR</div>
+            <pre>TOP   ▸ Total AR · % overdue · &gt;90d · avg terms
+MID   ▸ Aging stacked bar · risk by channel
+BOT   ▸ Top-20 debtors table · overdue exceptions</pre>
+          </div>
+          <div class="wf-text">
+            <div class="wf-text__title">D · Warehouse / Inventory</div>
+            <pre>TOP   ▸ Stock value · available vs reserved · near-expiry
+MID   ▸ Stock-value treemap · expiry aging calendar
+BOT   ▸ Negative-stock exceptions · open-PO pipeline</pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 9 -->
+      <section id="s9" class="section">
+        <div class="section-head">
+          <span class="section-num">09</span>
+          <h2>DAX measures (Sales-first)</h2>
+        </div>
+        <div class="note-warm" style="margin-bottom:20px">
+          Assumes <code>Fact_Sales</code> = cleaned Pivot, <code>Fact_Invoice</code> = cleaned Invoice, conformed <code>Dim_Date</code>. Replace negative-sign on net sales once the convention is confirmed (wrap in <code>ABS()</code> or negate as agreed).
+        </div>
+
+        <div class="dax-grid">
+
+          <div class="dax">
+            <div class="dax__title">Total Sales</div>
+            <div class="dax__desc">Net revenue, all transaction types · KPI cards, every trend.</div>
+            <pre>Total Sales =
+SUM ( Fact_Sales[total - vnd] )</pre>
+          </div>
+
+          <div class="dax">
+            <div class="dax__title">Total Margin &amp; Margin %</div>
+            <div class="dax__desc">Profit and profitability · KPI cards, rep/customer ranking.</div>
+            <pre>Total Margin = SUM ( Fact_Sales[Total Margin] )
+Margin % = DIVIDE ( [Total Margin], [Total Sales] )</pre>
+          </div>
+
+          <div class="dax">
+            <div class="dax__title">Total Orders &amp; Volume</div>
+            <div class="dax__desc">Order count &amp; kg sold · overview KPIs.</div>
+            <pre>Total Orders = DISTINCTCOUNT ( Fact_Invoice[INVOICE#] )
+Total Volume (kg) = SUM ( Fact_Sales[total - q] )</pre>
+          </div>
+
+          <div class="dax">
+            <div class="dax__title">Average Order Value / Price per Kg</div>
+            <div class="dax__desc">Basket &amp; pricing efficiency · KPI cards, customer page.</div>
+            <pre>Avg Order Value = DIVIDE ( [Total Sales], [Total Orders] )
+Avg Price / Kg  = DIVIDE ( [Total Sales], [Total Volume (kg)] )</pre>
+          </div>
+
+          <div class="dax">
+            <div class="dax__title">Revenue Target &amp; Achievement %</div>
+            <div class="dax__desc">Goal vs actual · target gauges, vs-target combo chart.</div>
+            <pre>Revenue Target = SUM ( Targets[Revenue target VND] )
+Target Achievement % =
+DIVIDE ( [Total Sales], [Revenue Target] )</pre>
+          </div>
+
+          <div class="dax">
+            <div class="dax__title">MoM &amp; YoY Growth %</div>
+            <div class="dax__desc">Momentum · trend tooltips, growth KPI. <em>YoY needs ≥13 months.</em></div>
+            <pre>Sales MoM % =
+VAR Prev = CALCULATE ( [Total Sales],
+    DATEADD ( Dim_Date[Date], -1, MONTH ) )
+RETURN DIVIDE ( [Total Sales] - Prev, Prev )
+
+Sales YoY % =
+VAR Prev = CALCULATE ( [Total Sales],
+    DATEADD ( Dim_Date[Date], -1, YEAR ) )
+RETURN DIVIDE ( [Total Sales] - Prev, Prev )</pre>
+          </div>
+
+          <div class="dax">
+            <div class="dax__title">MTD &amp; YTD Sales</div>
+            <div class="dax__desc">Period-to-date · executive &amp; overview headers.</div>
+            <pre>MTD Sales = TOTALMTD ( [Total Sales], Dim_Date[Date] )
+YTD Sales = TOTALYTD ( [Total Sales], Dim_Date[Date] )</pre>
+          </div>
+
+          <div class="dax">
+            <div class="dax__title">Sales Contribution %</div>
+            <div class="dax__desc">Share of total (works on any dimension) · mix bars, treemaps.</div>
+            <pre>Sales Contribution % =
+DIVIDE ( [Total Sales],
+    CALCULATE ( [Total Sales], ALLSELECTED () ) )</pre>
+          </div>
+
+          <div class="dax dax--wide">
+            <div class="dax__title">Margin Leakage — promo / FOC / compensation <span class="star">★ signature measure</span></div>
+            <div class="dax__desc">Revenue given away vs regular sales · the Margin &amp; Leakage page. Unique to this dataset.</div>
+            <pre>Regular Sales = SUM ( Fact_Sales[regular sales - vnd] )
+Promo+FOC Value =
+SUM ( Fact_Sales[promo - vnd] ) + SUM ( Fact_Sales[FOC - vnd] )
+    + SUM ( Fact_Sales[compensation - vnd] )
+Leakage % of Sales =
+DIVIDE ( [Promo+FOC Value], [Regular Sales] )</pre>
+          </div>
+
+          <div class="dax">
+            <div class="dax__title">Wagyu Revenue Share</div>
+            <div class="dax__desc">Premium-mix push · overview KPI, product page.</div>
+            <pre>Wagyu Revenue Share =
+DIVIDE (
+  CALCULATE ( [Total Sales], Dim_Product[Category] = "Wagyu" ),
+  [Total Sales] )</pre>
+          </div>
+
+          <div class="dax">
+            <div class="dax__title">Active &amp; Repeat Customers</div>
+            <div class="dax__desc">Customer base &amp; retention · customer page.</div>
+            <pre>Active Customers =
+DISTINCTCOUNT ( Fact_Sales[DebtorCode] )
+
+Repeat Customers =
+COUNTROWS ( FILTER ( VALUES ( Dim_Customer[DebtorCode] ),
+    CALCULATE ( DISTINCTCOUNT ( Fact_Invoice[INVOICE#] ) ) > 1 ) )</pre>
+          </div>
+
+          <div class="dax">
+            <div class="dax__title">Customer Contribution % (Pareto)</div>
+            <div class="dax__desc">Who drives the revenue · top-N table, concentration.</div>
+            <pre>Customer Contribution % =
+DIVIDE ( [Total Sales],
+  CALCULATE ( [Total Sales], ALL ( Dim_Customer ) ) )</pre>
+          </div>
+
+          <div class="dax">
+            <div class="dax__title">AR Outstanding &amp; % Overdue</div>
+            <div class="dax__desc">Cash health · accounting + executive pages.</div>
+            <pre>Total AR = SUM ( Fact_AR[Total amount] )
+% Overdue 90+ =
+DIVIDE ( SUM ( Fact_AR[>90] ), [Total AR] )</pre>
+          </div>
+
+          <div class="dax">
+            <div class="dax__title">Near-Expiry Stock Value</div>
+            <div class="dax__desc">Spoilage risk · warehouse page.</div>
+            <pre>Near-Expiry Value =
+CALCULATE ( SUM ( Fact_Inventory[Stock value] ),
+  Expdate[End] <= TODAY () + 30 )</pre>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- SECTION 10 -->
+      <section id="s10" class="section">
+        <div class="section-head">
+          <span class="section-num">10</span>
+          <h2>Power Query transformation steps</h2>
+        </div>
+        <p class="intro">An ordered recipe — applied per query, then the model is wired in §6.</p>
+        <div class="recipe">
+          <ol>
+            <li><strong>Connect</strong> each sheet as its own query; promote headers.</li>
+            <li><strong>Set data types</strong> explicitly as step 1 (Date, Decimal, Whole, Text).</li>
+            <li><strong>Remove empty rows &amp; columns</strong> (blank1, blank2, null-header cols).</li>
+            <li><strong>Trim + Clean</strong> all text key columns (Salesrep, Category, Itemtype, Temp zone).</li>
+            <li><strong>Split composite keys</strong> "code, name" → Code (number) + Name (text) by first delimiter.</li>
+            <li><strong>Standardise text</strong>: Capitalize Each Word; map Temp zone to Dry/Frozen/Chilled.</li>
+          </ol>
+          <ol start="7">
+            <li><strong>Mapping tables</strong> for category clean-up ("Diary"→"Dairy") via Merge.</li>
+            <li><strong>Fix dates</strong>: convert datetime→Date (resolve UTC+7 shift first).</li>
+            <li><strong>Confirm sign</strong> on Pivot net-sales / Inventory value; standardise.</li>
+            <li><strong>Remove duplicates</strong> on master keys only (after trim).</li>
+            <li><strong>Create Dim_Date</strong> (CALENDAR / List.Dates) covering all facts + targets; mark as date table.</li>
+            <li><strong>Split Region/Channel</strong> out of "Region Sales"; <strong>don't load</strong> the Check sheet.</li>
+          </ol>
+        </div>
+        <p class="foot-note">Append only if more monthly files arrive in the same shape; Merge is for enriching facts with master attributes if you prefer flattening over relationships (relationships recommended here).</p>
+      </section>
+
+      <!-- SECTION 11 -->
+      <section id="s11" class="section">
+        <div class="section-head">
+          <span class="section-num">11</span>
+          <h2>Build priority</h2>
+        </div>
+        <div class="priority">
+          <div class="prio">
+            <div class="prio__rank">P1</div>
+            <div><strong>Sales Dashboard.</strong> <span>Richest, cleanest data (two fact tables + full dimensions + multi-level targets), it's the client's stated focus, and it carries a unique margin-leakage angle that demos extremely well. Fastest path to visible value.</span></div>
+          </div>
+          <div class="prio prio--p2">
+            <div class="prio__rank">P2</div>
+            <div><strong>Business Overall Dashboard.</strong> <span>Reuses the Sales measures plus AR &amp; inventory roll-ups — cheap to build once Sales exists, and it's what leadership asks for first.</span></div>
+          </div>
+          <div class="prio prio--p3">
+            <div class="prio__rank">P3</div>
+            <div><strong>Warehouse Dashboard.</strong> <span>High operational value (expiry &amp; stock-value risk on perishables) but snapshot-only data; useful even without history.</span></div>
+          </div>
+          <div class="prio prio--p4">
+            <div class="prio__rank">P4</div>
+            <div><strong>Accounting / AR Dashboard.</strong> <span>Quick win but narrow (aging snapshot only). Best folded into the executive page until more finance data arrives.</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 12 -->
+      <section id="s12" class="section section--tight">
+        <div class="section-head">
+          <span class="section-num">12</span>
+          <h2>Final recommendation</h2>
+        </div>
+
+        <div class="final">
+          <div class="final__grid">
+            <div>
+              <div class="final__label">What this data is</div>
+              <p>A premium imported-meat &amp; seafood distributor in Vietnam (Wagyu-led, HORECA + retail). The workbook is already a near-complete Power BI source: facts, dimensions, targets and RLS.</p>
+              <div class="final__label">Build first &amp; why</div>
+              <p><strong>Sales</strong> — best data, client priority, and a standout margin-leakage story competitors' dashboards rarely show.</p>
+            </div>
+            <div>
+              <div class="final__label">Most important KPIs</div>
+              <p>Revenue &amp; Margin vs Target, Margin %, Growth, Wagyu share, Promo/FOC leakage, Top customers &amp; reps by margin.</p>
+              <div class="final__label">Fix before building</div>
+              <p>Composite keys, sales-rep trailing spaces, category typos, the date UTC shift, and the Pivot/Invoice double-count + sign convention.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card final-card">
+            <div class="card__title" style="margin-bottom:8px">Data that would level it up</div>
+            <ul>
+              <li>≥13 months history (true YoY)</li>
+              <li>Targets for the full date range (Jan–May 2025 gap)</li>
+              <li>List price / discount to measure true discounting</li>
+              <li>Dated stock-movement ledger (turnover, trend)</li>
+              <li>AP &amp; cash to round out finance</li>
+              <li>Customer first-order / onboarding dates</li>
+            </ul>
+          </div>
+          <div class="card final-card final-card--q">
+            <div class="card__title" style="margin-bottom:8px">Questions to ask the client first</div>
+            <ol>
+              <li>Is <strong>Pivot</strong> or <strong>Invoice</strong> the official sales number? How do they differ?</li>
+              <li>Why are net-sales values <strong>negative</strong> — sign convention or returns?</li>
+              <li>How far back does history go / will this refresh monthly?</li>
+              <li>Confirm the leading numeric code is the true key in each master.</li>
+              <li>What does each transaction type mean (FOC, compensation, sponsor, authorities)?</li>
+              <li>Who sees what? (validate the RLS Users/Pages mapping)</li>
+              <li>Currency display — VND, or VND + USD reporting view?</li>
+            </ol>
+          </div>
+        </div>
+
+        <p class="signoff">PREPARED AS A DASHBOARD-SCOPING DELIVERABLE · READ DIRECTLY FROM MASTERFILE · FIGURES TO BE VALIDATED WITH CLIENT</p>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<script>
+  // Scrollspy: highlight the active section in the contents nav.
+  (function () {
+    var links = Array.prototype.slice.call(document.querySelectorAll('.nav a'));
+    var map = {};
+    links.forEach(function (a) { map[a.getAttribute('href').slice(1)] = a; });
+    var sections = links
+      .map(function (a) { return document.getElementById(a.getAttribute('href').slice(1)); })
+      .filter(Boolean);
+
+    function setActive(id) {
+      links.forEach(function (a) { a.classList.remove('is-active'); });
+      if (map[id]) map[id].classList.add('is-active');
+    }
+
+    if ('IntersectionObserver' in window) {
+      var visible = {};
+      var obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { visible[e.target.id] = e.isIntersecting ? e.intersectionRatio : 0; });
+        var best = null, bestRatio = 0;
+        Object.keys(visible).forEach(function (id) {
+          if (visible[id] > bestRatio) { bestRatio = visible[id]; best = id; }
+        });
+        if (best) setActive(best);
+      }, { rootMargin: '-20% 0px -70% 0px', threshold: [0, 0.25, 0.5, 1] });
+      sections.forEach(function (s) { obs.observe(s); });
+    }
+  })();
+</script>
+</body>
+</html>
