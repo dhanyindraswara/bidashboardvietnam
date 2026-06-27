@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:#efeae2;color:#211c18;font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  ::selection{background:#7c2d33;color:#fff}
+  a{color:#7c2d33;text-decoration:none}
+  @media print{
+    .nav-col{display:none !important}
+    .doc-grid{display:block !important}
+    body{background:#fff}
+    section{break-inside:avoid}
+    .wrap{box-shadow:none !important}
+  }
+</style>
+</helmet>
+
+<template id="__bundler_thumbnail">
+  <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#211c18">
+    <svg viewBox="0 0 100 100" width="40%" height="40%" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="55" width="16" height="35" rx="2" fill="#7c2d33"/>
+      <rect x="32" y="38" width="16" height="52" rx="2" fill="#c8643f"/>
+      <rect x="54" y="48" width="16" height="42" rx="2" fill="#3a5a78"/>
+      <rect x="76" y="25" width="16" height="65" rx="2" fill="#6b8f4e"/>
+      <circle cx="18" cy="20" r="6" fill="#e0a07f"/>
+    </svg>
+  </div>
+</template>
+<div style="max-width:1280px;margin:0 auto;padding:0 24px 80px">
+
+  <!-- COVER -->
+  <header style="position:relative;margin-top:28px;background:#211c18;color:#f6f3ee;border-radius:16px;overflow:hidden;padding:54px 56px 48px">
+    <div style="position:absolute;inset:0;background:radial-gradient(120% 90% at 100% 0%,rgba(124,45,51,.55),transparent 60%);pointer-events:none"></div>
+    <div style="position:relative">
+      <div style="display:flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#cdbfae">
+        <span style="width:8px;height:8px;background:#c8643f;border-radius:50%"></span>
+        Power BI Consulting · Data Assessment &amp; Dashboard Blueprint
+      </div>
+      <h1 style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:46px;line-height:1.04;letter-spacing:-.02em;margin:22px 0 14px;max-width:18ch">Sales-Focused BI Blueprint for a Premium Meat &amp; Seafood Distributor</h1>
+      <p style="font-size:16px;color:#d8ccbd;max-width:64ch;margin:0 0 30px">A consultant's read of the <strong style="color:#fff">MASTERFILE</strong> workbook: what the data is, how to model it in Power BI, the data-quality work it needs, and a prioritised set of dashboard prototypes — built around <strong style="color:#fff">Sales</strong> as the lead deliverable.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:14px">
+        <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:12px 16px;min-width:130px">
+          <div style="font-family:'Space Grotesk';font-size:24px;font-weight:600">19</div>
+          <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#b7a994;font-family:'IBM Plex Mono'">sheets</div>
+        </div>
+        <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:12px 16px;min-width:130px">
+          <div style="font-family:'Space Grotesk';font-size:24px;font-weight:600">~172k</div>
+          <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#b7a994;font-family:'IBM Plex Mono'">fact rows</div>
+        </div>
+        <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:12px 16px;min-width:130px">
+          <div style="font-family:'Space Grotesk';font-size:24px;font-weight:600">VND</div>
+          <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#b7a994;font-family:'IBM Plex Mono'">currency</div>
+        </div>
+        <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:12px 16px;min-width:130px">
+          <div style="font-family:'Space Grotesk';font-size:24px;font-weight:600">Star</div>
+          <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#b7a994;font-family:'IBM Plex Mono'">target schema</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ASSUMPTIONS BANNER -->
+  <div style="margin-top:18px;background:#fbf6ea;border:1px solid #ead9b8;border-left:4px solid #c8643f;border-radius:10px;padding:16px 20px;font-size:13.5px;color:#5c5147">
+    <strong style="font-family:'Space Grotesk';color:#8a4a1f">Reading of the dataset (state your assumptions to the client).</strong>
+    The workbook is already shaped as a Power BI source: master/dimension tables, two transaction fact tables, target tables, and three RLS tables (Users / Pages / Pages for users). Values are in <strong>VND</strong>; product mix is dominated by imported <strong>Wagyu &amp; beef</strong>, plus seafood, pork, lamb, poultry, dairy and pantry. Customers are HORECA + retail (hotels, restaurants, chains, distributors, butchers). All figures below are read directly from the sheets — where a field the brief asked for is absent, it is flagged as <em>missing</em>.
+  </div>
+
+  <div class="doc-grid" style="display:grid;grid-template-columns:236px minmax(0,1fr);gap:48px;margin-top:40px;align-items:start">
+
+    <!-- NAV -->
+    <aside class="nav-col" style="position:sticky;top:24px">
+      <div style="font-family:'IBM Plex Mono';font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#9a9086;margin:0 0 12px 2px">Contents</div>
+      <nav style="display:flex;flex-direction:column;gap:1px;font-size:13.5px">
+        <a href="#s1" style="padding:7px 10px;border-radius:7px;color:#4b433b">1 · Sheet inventory &amp; classification</a>
+        <a href="#s2" style="padding:7px 10px;border-radius:7px;color:#4b433b">2 · Business Overall / executive view</a>
+        <a href="#s3" style="padding:7px 10px;border-radius:7px;color:#4b433b">3 · Department sheets</a>
+        <a href="#s4" style="padding:7px 10px;border-radius:7px;color:#fff;background:#7c2d33;font-weight:500">4 · Deep dive — Sales</a>
+        <a href="#s5" style="padding:7px 10px;border-radius:7px;color:#4b433b">5 · Data quality check</a>
+        <a href="#s6" style="padding:7px 10px;border-radius:7px;color:#4b433b">6 · Power BI data model</a>
+        <a href="#s7" style="padding:7px 10px;border-radius:7px;color:#4b433b">7 · Dashboard pages</a>
+        <a href="#s8" style="padding:7px 10px;border-radius:7px;color:#4b433b">8 · Wireframes</a>
+        <a href="#s9" style="padding:7px 10px;border-radius:7px;color:#4b433b">9 · DAX measures</a>
+        <a href="#s10" style="padding:7px 10px;border-radius:7px;color:#4b433b">10 · Power Query steps</a>
+        <a href="#s11" style="padding:7px 10px;border-radius:7px;color:#4b433b">11 · Build priority</a>
+        <a href="#s12" style="padding:7px 10px;border-radius:7px;color:#4b433b">12 · Final recommendation</a>
+      </nav>
+    </aside>
+
+    <!-- CONTENT -->
+    <main style="min-width:0">
+
+      <!-- SECTION 1 -->
+      <section id="s1" style="margin:0 0 70px;scroll-margin-top:24px">
+        <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:8px">
+          <span style="font-family:'IBM Plex Mono';font-size:13px;color:#7c2d33;font-weight:600">01</span>
+          <h2 style="font-family:'Space Grotesk';font-weight:600;font-size:28px;letter-spacing:-.01em;margin:0">Sheet inventory &amp; classification</h2>
+        </div>
+        <p style="color:#5c5147;max-width:70ch;margin:0 0 24px">Nineteen sheets, but only a handful are dashboard <em>sources</em> — the rest are dimensions, targets, security, or QA helpers. Classifying them first is what turns a messy workbook into a clean model.</p>
+
+        <div style="overflow-x:auto;border:1px solid #e3ddd3;border-radius:12px;background:#fff">
+          <table style="border-collapse:collapse;width:100%;font-size:13px;min-width:760px">
+            <thead>
+              <tr style="background:#f4efe7;text-align:left">
+                <th style="padding:11px 14px;font-family:'Space Grotesk';font-weight:600;border-bottom:1px solid #e3ddd3">Sheet</th>
+                <th style="padding:11px 14px;font-family:'Space Grotesk';font-weight:600;border-bottom:1px solid #e3ddd3">Rows</th>
+                <th style="padding:11px 14px;font-family:'Space Grotesk';font-weight:600;border-bottom:1px solid #e3ddd3">Role in model</th>
+                <th style="padding:11px 14px;font-family:'Space Grotesk';font-weight:600;border-bottom:1px solid #e3ddd3">Classification</th>
+                <th style="padding:11px 14px;font-family:'Space Grotesk';font-weight:600;border-bottom:1px solid #e3ddd3">Purpose</th>
+              </tr>
+            </thead>
+            <tbody style="font-family:'IBM Plex Sans'">
+              <tr style="border-bottom:1px solid #efeae2;background:#fcf6f1">
+                <td style="padding:10px 14px;font-weight:600">Invoice</td><td style="padding:10px 14px;font-family:'IBM Plex Mono'">101,604</td>
+                <td style="padding:10px 14px"><span style="background:#7c2d33;color:#fff;font-size:11px;padding:2px 7px;border-radius:5px;font-family:'IBM Plex Mono'">FACT</span></td>
+                <td style="padding:10px 14px"><strong>Sales</strong></td>
+                <td style="padding:10px 14px;color:#5c5147">Invoice-line sales: revenue, COGS, margin per item per customer per day. The core sales engine.</td>
+              </tr>
+              <tr style="border-bottom:1px solid #efeae2;background:#fcf6f1">
+                <td style="padding:10px 14px;font-weight:600">Pivot</td><td style="padding:10px 14px;font-family:'IBM Plex Mono'">68,299</td>
+                <td style="padding:10px 14px"><span style="background:#7c2d33;color:#fff;font-size:11px;padding:2px 7px;border-radius:5px;font-family:'IBM Plex Mono'">FACT</span></td>
+                <td style="padding:10px 14px"><strong>Sales</strong></td>
+                <td style="padding:10px 14px;color:#5c5147">Sales split by transaction <em>type</em> (regular, promo, FOC, replacement, compensation, sponsor, clearing…) with COGS &amp; margin. Explains the "why" behind net revenue.</td>
+              </tr>
+              <tr style="border-bottom:1px solid #efeae2">
+                <td style="padding:10px 14px;font-weight:600">Inventory</td><td style="padding:10px 14px;font-family:'IBM Plex Mono'">1,713</td>
+                <td style="padding:10px 14px"><span style="background:#3a5a78;color:#fff;font-size:11px;padding:2px 7px;border-radius:5px;font-family:'IBM Plex Mono'">SNAPSHOT</span></td>
+                <td style="padding:10px 14px">Warehouse</td>
+                <td style="padding:10px 14px;color:#5c5147">Current stock by warehouse: on-hand, available, stock value, incoming/outgoing, cost price.</td>
+              </tr>
+              <tr style="border-bottom:1px solid #efeae2">
+                <td style="padding:10px 14px;font-weight:600">Batches</td><td style="padding:10px 14px;font-family:'IBM Plex Mono'">1,351</td>
+                <td style="padding:10px 14px"><span style="background:#3a5a78;color:#fff;font-size:11px;padding:2px 7px;border-radius:5px;font-family:'IBM Plex Mono'">SNAPSHOT</span></td>
+                <td style="padding:10px 14px">Warehouse</td>
+                <td style="padding:10px 14px;color:#5c5147">Serial/lot/batch positions: in, out, reserved, available by warehouse.</td>
+              </tr>
+              <tr style="border-bottom:1px solid #efeae2">
+                <td style="padding:10px 14px;font-weight:600">Expdate</td><td style="padding:10px 14px;font-family:'IBM Plex Mono'">10,059</td>
+                <td style="padding:10px 14px"><span style="background:#3a5a78;color:#fff;font-size:11px;padding:2px 7px;border-radius:5px;font-family:'IBM Plex Mono'">SNAPSHOT</span></td>
+                <td style="padding:10px 14px">Warehouse</td>
+                <td style="padding:10px 14px;color:#5c5147">Batch expiry windows (start/end) — critical for perishable meat &amp; seafood (ageing/expiry risk).</td>
+              </tr>
+              <tr style="border-bottom:1px solid #efeae2">
+                <td style="padding:10px 14px;font-weight:600">PO</td><td style="padding:10px 14px;font-family:'IBM Plex Mono'">210</td>
+                <td style="padding:10px 14px"><span style="background:#3a5a78;color:#fff;font-size:11px;padding:2px 7px;border-radius:5px;font-family:'IBM Plex Mono'">FACT</span></td>
+                <td style="padding:10px 14px">Warehouse / Procurement</td>
+                <td style="padding:10px 14px;color:#5c5147">Open purchase orders: quantity to be received by supplier &amp; warehouse.</td>
+              </tr>
+              <tr style="border-bottom:1px solid #efeae2">
+                <td style="padding:10px 14px;font-weight:600">AR</td><td style="padding:10px 14px;font-family:'IBM Plex Mono'">839</td>
+                <td style="padding:10px 14px"><span style="background:#3a5a78;color:#fff;font-size:11px;padding:2px 7px;border-radius:5px;font-family:'IBM Plex Mono'">SNAPSHOT</span></td>
+                <td style="padding:10px 14px">Accounting</td>
+                <td style="padding:10px 14px;color:#5c5147">Receivables aging by customer: 0–30 / 31–60 / 61–90 / &gt;90, total &amp; terms.</td>
+              </tr>
+              <tr style="border-bottom:1px solid #efeae2">
+                <td style="padding:10px 14px;font-weight:600">Master-item</td><td style="padding:10px 14px;font-family:'IBM Plex Mono'">1,038</td>
+                <td style="padding:10px 14px"><span style="background:#6b8f4e;color:#fff;font-size:11px;padding:2px 7px;border-radius:5px;font-family:'IBM Plex Mono'">DIM</span></td>
+                <td style="padding:10px 14px">Product</td>
+                <td style="padding:10px 14px;color:#5c5147">Item master: category, brand, item type, Wagyu grade, temp zone, supplier, unit conversion.</td>
+              </tr>
+              <tr style="border-bottom:1px solid #efeae2">
+                <td style="padding:10px 14px;font-weight:600">Master-debtor</td><td style="padding:10px 14px;font-family:'IBM Plex Mono'">2,281</td>
+                <td style="padding:10px 14px"><span style="background:#6b8f4e;color:#fff;font-size:11px;padding:2px 7px;border-radius:5px;font-family:'IBM Plex Mono'">DIM</span></td>
+                <td style="padding:10px 14px">Customer</td>
+                <td style="padding:10px 14px;color:#5c5147">Customer master: sales rep, region, channel category, WH location, delivery location.</td>
+              </tr>
+              <tr style="border-bottom:1px solid #efeae2">
+                <td style="padding:10px 14px;font-weight:600">Master-supplier</td><td style="padding:10px 14px;font-family:'IBM Plex Mono'">60</td>
+                <td style="padding:10px 14px"><span style="background:#6b8f4e;color:#fff;font-size:11px;padding:2px 7px;border-radius:5px;font-family:'IBM Plex Mono'">DIM</span></td>
+                <td style="padding:10px 14px">Supplier</td>
+                <td style="padding:10px 14px;color:#5c5147">Supplier master: cut-off days, location.</td>
+              </tr>
+              <tr style="border-bottom:1px solid #efeae2">
+                <td style="padding:10px 14px;font-weight:600">Targets</td><td style="padding:10px 14px;font-family:'IBM Plex Mono'">13</td>
+                <td style="padding:10px 14px"><span style="background:#8a6d1f;color:#fff;font-size:11px;padding:2px 7px;border-radius:5px;font-family:'IBM Plex Mono'">TARGET</span></td>
+                <td style="padding:10px 14px">Company</td>
+                <td style="padding:10px 14px;color:#5c5147">Monthly revenue &amp; margin targets (company level).</td>
+              </tr>
+              <tr style="border-bottom:1px solid #efeae2">
+                <td style="padding:10px 14px;font-weight:600">Targetsdetails / Reptargets / Regiontargets</td><td style="padding:10px 14px;font-family:'IBM Plex Mono'">135 / 135 / 61</td>
+                <td style="padding:10px 14px"><span style="background:#8a6d1f;color:#fff;font-size:11px;padding:2px 7px;border-radius:5px;font-family:'IBM Plex Mono'">TARGET</span></td>
+                <td style="padding:10px 14px">Sales rep / Region</td>
+                <td style="padding:10px 14px;color:#5c5147">Monthly targets broken down by sales rep and by region — enables actual-vs-target at every level.</td>
+              </tr>
+              <tr style="border-bottom:1px solid #efeae2">
+                <td style="padding:10px 14px;font-weight:600">Forecast</td><td style="padding:10px 14px;font-family:'IBM Plex Mono'">15</td>
+                <td style="padding:10px 14px"><span style="background:#8a6d1f;color:#fff;font-size:11px;padding:2px 7px;border-radius:5px;font-family:'IBM Plex Mono'">TARGET</span></td>
+                <td style="padding:10px 14px">Company</td>
+                <td style="padding:10px 14px;color:#5c5147">Rolling period volumes vs last year (incl. Wagyu-specific quantity).</td>
+              </tr>
+              <tr style="border-bottom:1px solid #efeae2">
+                <td style="padding:10px 14px;font-weight:600">Users / Pages / Pages for users</td><td style="padding:10px 14px;font-family:'IBM Plex Mono'">22 / 28 / 92</td>
+                <td style="padding:10px 14px"><span style="background:#5b5048;color:#fff;font-size:11px;padding:2px 7px;border-radius:5px;font-family:'IBM Plex Mono'">RLS</span></td>
+                <td style="padding:10px 14px">Security</td>
+                <td style="padding:10px 14px;color:#5c5147">Row-level / page-level security mapping — who can see which report page. Keep as a security layer, not a visual source.</td>
+              </tr>
+              <tr>
+                <td style="padding:10px 14px;font-weight:600">Check</td><td style="padding:10px 14px;font-family:'IBM Plex Mono'">2,876</td>
+                <td style="padding:10px 14px"><span style="background:#9a9086;color:#fff;font-size:11px;padding:2px 7px;border-radius:5px;font-family:'IBM Plex Mono'">QA</span></td>
+                <td style="padding:10px 14px">Helper</td>
+                <td style="padding:10px 14px;color:#5c5147">Reconciliation worksheet ("new debtor / new item?" vs masters). Do <strong>not</strong> load — replace with a proper Power Query master-matching step.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:22px">
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:12px;padding:18px 20px">
+            <div style="font-family:'Space Grotesk';font-weight:600;font-size:15px;margin-bottom:6px">Can these connect into one model?</div>
+            <p style="margin:0;color:#5c5147;font-size:13.5px">Yes — and they were clearly built to. <strong>Invoice</strong> and <strong>Pivot</strong> both carry item + customer + date keys that join to <strong>Master-item</strong> and <strong>Master-debtor</strong>; Inventory/PO/Batches join on item + supplier + warehouse. A single shared <strong>Date</strong> table ties facts and targets together. This is a textbook star schema waiting to be wired up.</p>
+          </div>
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:12px;padding:18px 20px">
+            <div style="font-family:'Space Grotesk';font-weight:600;font-size:15px;margin-bottom:6px">⚠ The one catch to confirm</div>
+            <p style="margin:0;color:#5c5147;font-size:13.5px">Keys are stored as <em>"code, name"</em> strings (e.g. <code style="font-family:'IBM Plex Mono';font-size:12px;background:#f4efe7;padding:1px 5px;border-radius:4px">100073, Salt n Pepper</code>). They must be split to a clean numeric code before relationships will hold. Confirm with the client that the leading code is the true primary key in every master.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 2 -->
+      <section id="s2" style="margin:0 0 70px;scroll-margin-top:24px">
+        <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:8px">
+          <span style="font-family:'IBM Plex Mono';font-size:13px;color:#7c2d33;font-weight:600">02</span>
+          <h2 style="font-family:'Space Grotesk';font-weight:600;font-size:28px;letter-spacing:-.01em;margin:0">Business Overall — the executive view</h2>
+        </div>
+        <p style="color:#5c5147;max-width:72ch;margin:0 0 22px">There is no single "Business Overall" sheet, but the executive layer is fully derivable: <strong>Invoice</strong> + <strong>Pivot</strong> give revenue, margin and volume; the <strong>Targets</strong> family gives the goalposts; <strong>AR</strong> adds cash health; <strong>Inventory</strong> adds asset/stock health. An executive dashboard is a roll-up of the department facts against target — not a new data source.</p>
+
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:22px">
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:12px;padding:18px 20px">
+            <div style="font-family:'IBM Plex Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#7c2d33;margin-bottom:10px">Company KPIs</div>
+            <ul style="margin:0;padding-left:18px;color:#42392f;font-size:13.5px;line-height:1.85">
+              <li>Total Revenue, Total Margin, <strong>Margin %</strong> (VND)</li>
+              <li>Revenue &amp; Margin <strong>vs Target</strong> (achievement %)</li>
+              <li>YoY / vs Last Year growth (Forecast sheet supports this)</li>
+              <li>Total Volume (kg) and Wagyu volume share</li>
+              <li>Active customers &amp; new-vs-returning split</li>
+              <li>Receivables outstanding &amp; % overdue (&gt;90 days)</li>
+              <li>Stock value on hand &amp; expiry-at-risk value</li>
+            </ul>
+          </div>
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:12px;padding:18px 20px">
+            <div style="font-family:'IBM Plex Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#7c2d33;margin-bottom:10px">Executive pages to build</div>
+            <ul style="margin:0;padding-left:18px;color:#42392f;font-size:13.5px;line-height:1.85">
+              <li><strong>Company Scorecard</strong> — KPI band + revenue-vs-target trend</li>
+              <li><strong>Department Comparison</strong> — Sales / Warehouse / AR side by side</li>
+              <li><strong>Region &amp; Channel</strong> — performance map of North/Central/South + channel mix</li>
+              <li><strong>Cash &amp; Stock Health</strong> — AR aging + inventory value &amp; expiry</li>
+            </ul>
+          </div>
+        </div>
+
+        <div style="background:#f4efe7;border:1px solid #e3ddd3;border-radius:12px;padding:18px 22px">
+          <div style="font-family:'Space Grotesk';font-weight:600;font-size:15px;margin-bottom:6px">Management insights this layer unlocks</div>
+          <p style="margin:0;color:#5c5147;font-size:13.5px;max-width:80ch">Are we hitting the monthly revenue &amp; margin target? Which region or channel is carrying (or dragging) the number? Is growth coming from volume or price/mix? How much margin are we giving away through promo / FOC / compensation (visible only in <strong>Pivot</strong>)? Is cash tied up in overdue receivables or in slow, near-expiry stock? Those five questions are the whole executive story.</p>
+        </div>
+      </section>
+
+      <!-- SECTION 3 -->
+      <section id="s3" style="margin:0 0 70px;scroll-margin-top:24px">
+        <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:8px">
+          <span style="font-family:'IBM Plex Mono';font-size:13px;color:#7c2d33;font-weight:600">03</span>
+          <h2 style="font-family:'Space Grotesk';font-weight:600;font-size:28px;letter-spacing:-.01em;margin:0">Department sheets — practical read</h2>
+        </div>
+        <p style="color:#5c5147;max-width:72ch;margin:0 0 24px">Concise per department (Sales gets its own deep dive in §4).</p>
+
+        <div style="display:flex;flex-direction:column;gap:16px">
+
+          <!-- Accounting -->
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:12px;padding:20px 22px;border-top:3px solid #3a5a78">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+              <h3 style="font-family:'Space Grotesk';font-weight:600;font-size:18px;margin:0">Accounting — <span style="color:#3a5a78">AR</span></h3>
+              <span style="font-family:'IBM Plex Mono';font-size:11px;color:#9a9086">839 customers</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1.2fr 1fr 1.3fr;gap:18px;font-size:13px">
+              <div><div style="font-family:'IBM Plex Mono';font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#9a9086;margin-bottom:5px">Key columns</div><span style="color:#42392f">Classification (HOT/RES…), 0–30, 31–60, 61–90, &gt;90, Total amount, Total terms</span></div>
+              <div><div style="font-family:'IBM Plex Mono';font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#9a9086;margin-bottom:5px">KPIs</div><span style="color:#42392f">Total AR, % overdue, &gt;90-day exposure, avg collection terms, DSO proxy, top debtors</span></div>
+              <div><div style="font-family:'IBM Plex Mono';font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#9a9086;margin-bottom:5px">Visuals / questions</div><span style="color:#42392f">Aging stacked bar, overdue heat table, top-20 debtors. "Who owes us, how old, who's a credit risk?"</span></div>
+            </div>
+            <div style="margin-top:10px;font-size:12.5px;color:#8a4a1f;background:#fbf6ea;border-radius:7px;padding:8px 12px"><strong>Missing for full accounting:</strong> no GL / P&amp;L, no AP (payables), no cash/bank, no invoice payment dates. AR aging is a snapshot — there's no transaction history to compute true DSO.</div>
+          </div>
+
+          <!-- Warehouse -->
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:12px;padding:20px 22px;border-top:3px solid #3a5a78">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+              <h3 style="font-family:'Space Grotesk';font-weight:600;font-size:18px;margin:0">Warehouse — <span style="color:#3a5a78">Inventory · Batches · Expdate · PO</span></h3>
+            </div>
+            <div style="display:grid;grid-template-columns:1.2fr 1fr 1.3fr;gap:18px;font-size:13px">
+              <div><div style="font-family:'IBM Plex Mono';font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#9a9086;margin-bottom:5px">Key columns</div><span style="color:#42392f">Warehouse, Stock, Available, Stock value, Cost price, Reserved, lot In/Out, expiry Start/End, PO qty to receive</span></div>
+              <div><div style="font-family:'IBM Plex Mono';font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#9a9086;margin-bottom:5px">KPIs</div><span style="color:#42392f">Stock value by WH, available vs reserved, near-expiry value, items below zero, open PO value, days-to-cover</span></div>
+              <div><div style="font-family:'IBM Plex Mono';font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#9a9086;margin-bottom:5px">Visuals / questions</div><span style="color:#42392f">Stock-value treemap, expiry calendar/aging, negative-stock exception list, PO pipeline. "What's at risk of expiring? Where's cash frozen in stock?"</span></div>
+            </div>
+            <div style="margin-top:10px;font-size:12.5px;color:#8a4a1f;background:#fbf6ea;border-radius:7px;padding:8px 12px"><strong>Missing:</strong> no dated stock-movement ledger → inventory is a current snapshot only (no historical stock trend, no true turnover unless joined to Invoice volume). Several negative stock values &amp; stock-value figures need a sign/quality review.</div>
+          </div>
+
+          <!-- Procurement / supplier -->
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:12px;padding:20px 22px;border-top:3px solid #6b8f4e">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+              <h3 style="font-family:'Space Grotesk';font-weight:600;font-size:18px;margin:0">Supply / Product masters — <span style="color:#6b8f4e">Master-item · Master-supplier</span></h3>
+            </div>
+            <div style="font-size:13px;color:#42392f">Dimensions, not departments — but rich: <strong>16 categories</strong> (Beef, Wagyu, Seafood, Pork, Lamb, Poultry, Dairy, Pantry…), <strong>171 brands</strong>, item type, Wagyu grade, temp zone, supplier cut-off days. These power every "by product / by brand / by supplier" slice across all dashboards. Worth a small <strong>Supplier scorecard</strong> later (lead time, on-time PO, margin by supplier).</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- SECTION 4 — SALES DEEP DIVE -->
+      <section id="s4" style="margin:0 0 70px;scroll-margin-top:24px">
+        <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:8px">
+          <span style="font-family:'IBM Plex Mono';font-size:13px;color:#7c2d33;font-weight:600">04</span>
+          <h2 style="font-family:'Space Grotesk';font-weight:600;font-size:28px;letter-spacing:-.01em;margin:0">Deep dive — Sales <span style="font-size:14px;font-weight:500;color:#7c2d33;font-family:'IBM Plex Sans';background:#f6e3e0;padding:3px 9px;border-radius:20px;vertical-align:middle">priority</span></h2>
+        </div>
+        <p style="color:#5c5147;max-width:74ch;margin:0 0 24px">Sales is the strongest part of this dataset — two complementary fact tables, full customer &amp; product dimensions, and targets at company / rep / region level. Below: what each analysis the brief asked for can or cannot be answered with the data in hand.</p>
+
+        <!-- two fact tables explainer -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">
+          <div style="background:#2a211e;color:#f3ece2;border-radius:12px;padding:18px 20px">
+            <div style="font-family:'IBM Plex Mono';font-size:11px;color:#e0a07f;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">Fact A · Invoice (101,604 rows)</div>
+            <p style="margin:0;font-size:13px;color:#d8ccbd">Gross invoice lines. Fields: INVOICE#, DATE, DEBTOR, ITEM, INVOICE REF, QUANTITY, PRICE/UNIT, REVENUE, COGS (per unit), COGS Total, MARGIN TOTAL. This is your <strong style="color:#fff">order &amp; revenue</strong> grain.</p>
+          </div>
+          <div style="background:#2a211e;color:#f3ece2;border-radius:12px;padding:18px 20px">
+            <div style="font-family:'IBM Plex Mono';font-size:11px;color:#e0a07f;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">Fact B · Pivot (68,299 rows)</div>
+            <p style="margin:0;font-size:13px;color:#d8ccbd">Net sales decomposed by <strong style="color:#fff">transaction type</strong>: regular sales, promo, FOC (free-of-charge), replacement, compensation, sponsor, clearing, received-difference, authorities — each with VND &amp; quantity, plus COGS &amp; margin. This is how you measure <strong style="color:#fff">revenue leakage</strong>.</p>
+          </div>
+        </div>
+        <div style="background:#fbf6ea;border:1px solid #ead9b8;border-radius:10px;padding:13px 18px;font-size:12.5px;color:#8a4a1f;margin-bottom:26px">
+          <strong>Decide the relationship up front:</strong> Invoice and Pivot overlap. Confirm with the client whether <em>Pivot</em> is the authoritative net-sales table (regular + adjustments) and <em>Invoice</em> is gross billing — or vice-versa. Don't sum both into one "Total Sales" or you'll double-count. My recommended default: <strong>Pivot = net sales / margin truth</strong>, <strong>Invoice = order &amp; pricing detail.</strong>
+        </div>
+
+        <!-- coverage matrix -->
+        <h3 style="font-family:'Space Grotesk';font-weight:600;font-size:17px;margin:0 0 12px">What we can answer — coverage matrix</h3>
+        <div style="overflow-x:auto;border:1px solid #e3ddd3;border-radius:12px;background:#fff;margin-bottom:26px">
+          <table style="border-collapse:collapse;width:100%;font-size:13px;min-width:680px">
+            <thead><tr style="background:#f4efe7;text-align:left">
+              <th style="padding:10px 14px;font-family:'Space Grotesk';font-weight:600;border-bottom:1px solid #e3ddd3">Sales analysis</th>
+              <th style="padding:10px 14px;font-family:'Space Grotesk';font-weight:600;border-bottom:1px solid #e3ddd3">Status</th>
+              <th style="padding:10px 14px;font-family:'Space Grotesk';font-weight:600;border-bottom:1px solid #e3ddd3">Source &amp; note</th>
+            </tr></thead>
+            <tbody>
+              <tr style="border-bottom:1px solid #efeae2"><td style="padding:9px 14px">Revenue trend (D/M/Q/Y)</td><td style="padding:9px 14px"><span style="color:#3f7d3f;font-weight:600">✓ Yes</span></td><td style="padding:9px 14px;color:#5c5147">DATE on both facts. Needs a Date table.</td></tr>
+              <tr style="border-bottom:1px solid #efeae2"><td style="padding:9px 14px">Sales target vs actual</td><td style="padding:9px 14px"><span style="color:#3f7d3f;font-weight:600">✓ Yes</span></td><td style="padding:9px 14px;color:#5c5147">Targets at company, rep &amp; region level. <em>Targets only cover 2025-06 → 2026-05.</em></td></tr>
+              <tr style="border-bottom:1px solid #efeae2"><td style="padding:9px 14px">Product / category / brand</td><td style="padding:9px 14px"><span style="color:#3f7d3f;font-weight:600">✓ Yes</span></td><td style="padding:9px 14px;color:#5c5147">Master-item: category, brand, item type, Wagyu grade.</td></tr>
+              <tr style="border-bottom:1px solid #efeae2"><td style="padding:9px 14px">Customer performance &amp; contribution</td><td style="padding:9px 14px"><span style="color:#3f7d3f;font-weight:600">✓ Yes</span></td><td style="padding:9px 14px;color:#5c5147">DEBTOR key + Master-debtor channel/category.</td></tr>
+              <tr style="border-bottom:1px solid #efeae2"><td style="padding:9px 14px">Region / area performance</td><td style="padding:9px 14px"><span style="color:#3f7d3f;font-weight:600">✓ Yes</span></td><td style="padding:9px 14px;color:#5c5147">Region Sales (North/Central/South + Retail/Foodshop channels).</td></tr>
+              <tr style="border-bottom:1px solid #efeae2"><td style="padding:9px 14px">Salesperson / team</td><td style="padding:9px 14px"><span style="color:#3f7d3f;font-weight:600">✓ Yes</span></td><td style="padding:9px 14px;color:#5c5147">Salesrep on Master-debtor + rep targets. <em>Names need de-duping (trailing spaces).</em></td></tr>
+              <tr style="border-bottom:1px solid #efeae2"><td style="padding:9px 14px">Order volume / count</td><td style="padding:9px 14px"><span style="color:#3f7d3f;font-weight:600">✓ Yes</span></td><td style="padding:9px 14px;color:#5c5147">Distinct INVOICE# = orders; QUANTITY (kg) = volume.</td></tr>
+              <tr style="border-bottom:1px solid #efeae2"><td style="padding:9px 14px">Avg order / transaction value</td><td style="padding:9px 14px"><span style="color:#3f7d3f;font-weight:600">✓ Yes</span></td><td style="padding:9px 14px;color:#5c5147">Revenue ÷ distinct INVOICE#.</td></tr>
+              <tr style="border-bottom:1px solid #efeae2"><td style="padding:9px 14px">Margin leakage (promo/FOC/comp)</td><td style="padding:9px 14px"><span style="color:#3f7d3f;font-weight:600">✓ Yes — standout</span></td><td style="padding:9px 14px;color:#5c5147">Pivot transaction-type columns. Rare in raw sales data — a real selling point.</td></tr>
+              <tr style="border-bottom:1px solid #efeae2"><td style="padding:9px 14px">Sales growth %</td><td style="padding:9px 14px"><span style="color:#b8860b;font-weight:600">◐ Partial</span></td><td style="padding:9px 14px;color:#5c5147">MoM within the data is fine; YoY needs ≥13 months — confirm history depth (data appears to start 2025-01).</td></tr>
+              <tr style="border-bottom:1px solid #efeae2"><td style="padding:9px 14px">Repeat / new customer</td><td style="padding:9px 14px"><span style="color:#b8860b;font-weight:600">◐ Derivable</span></td><td style="padding:9px 14px;color:#5c5147">First-purchase date via DAX (no flag in data). Solid if history is long enough.</td></tr>
+              <tr><td style="padding:9px 14px">Sales pipeline / quotes / discounts list price</td><td style="padding:9px 14px"><span style="color:#a23b3b;font-weight:600">✗ Missing</span></td><td style="padding:9px 14px;color:#5c5147">No CRM/quote data, no list-vs-net price, no order-status funnel. Sales is invoiced-only.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Sales KPI catalogue -->
+        <h3 style="font-family:'Space Grotesk';font-weight:600;font-size:17px;margin:0 0 12px">Sales KPI catalogue</h3>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px">
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:10px;padding:14px"><div style="font-family:'IBM Plex Mono';font-size:10px;color:#9a9086;text-transform:uppercase;letter-spacing:.06em">core</div><div style="font-family:'Space Grotesk';font-weight:600;font-size:14px;margin-top:4px">Total Revenue (VND)</div></div>
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:10px;padding:14px"><div style="font-family:'IBM Plex Mono';font-size:10px;color:#9a9086;text-transform:uppercase;letter-spacing:.06em">core</div><div style="font-family:'Space Grotesk';font-weight:600;font-size:14px;margin-top:4px">Total Margin &amp; Margin %</div></div>
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:10px;padding:14px"><div style="font-family:'IBM Plex Mono';font-size:10px;color:#9a9086;text-transform:uppercase;letter-spacing:.06em">core</div><div style="font-family:'Space Grotesk';font-weight:600;font-size:14px;margin-top:4px">Volume (kg)</div></div>
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:10px;padding:14px"><div style="font-family:'IBM Plex Mono';font-size:10px;color:#9a9086;text-transform:uppercase;letter-spacing:.06em">core</div><div style="font-family:'Space Grotesk';font-weight:600;font-size:14px;margin-top:4px">Orders (distinct invoices)</div></div>
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:10px;padding:14px"><div style="font-family:'IBM Plex Mono';font-size:10px;color:#9a9086;text-transform:uppercase;letter-spacing:.06em">efficiency</div><div style="font-family:'Space Grotesk';font-weight:600;font-size:14px;margin-top:4px">Avg Order Value</div></div>
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:10px;padding:14px"><div style="font-family:'IBM Plex Mono';font-size:10px;color:#9a9086;text-transform:uppercase;letter-spacing:.06em">efficiency</div><div style="font-family:'Space Grotesk';font-weight:600;font-size:14px;margin-top:4px">Avg Price / kg</div></div>
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:10px;padding:14px"><div style="font-family:'IBM Plex Mono';font-size:10px;color:#9a9086;text-transform:uppercase;letter-spacing:.06em">target</div><div style="font-family:'Space Grotesk';font-weight:600;font-size:14px;margin-top:4px">Target Achievement %</div></div>
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:10px;padding:14px"><div style="font-family:'IBM Plex Mono';font-size:10px;color:#9a9086;text-transform:uppercase;letter-spacing:.06em">growth</div><div style="font-family:'Space Grotesk';font-weight:600;font-size:14px;margin-top:4px">MoM / YoY Growth %</div></div>
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:10px;padding:14px"><div style="font-family:'IBM Plex Mono';font-size:10px;color:#9a9086;text-transform:uppercase;letter-spacing:.06em">mix</div><div style="font-family:'Space Grotesk';font-weight:600;font-size:14px;margin-top:4px">Sales Contribution %</div></div>
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:10px;padding:14px"><div style="font-family:'IBM Plex Mono';font-size:10px;color:#9a9086;text-transform:uppercase;letter-spacing:.06em">mix</div><div style="font-family:'Space Grotesk';font-weight:600;font-size:14px;margin-top:4px">Wagyu Revenue Share</div></div>
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:10px;padding:14px"><div style="font-family:'IBM Plex Mono';font-size:10px;color:#9a9086;text-transform:uppercase;letter-spacing:.06em">leakage</div><div style="font-family:'Space Grotesk';font-weight:600;font-size:14px;margin-top:4px">Promo + FOC % of Sales</div></div>
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:10px;padding:14px"><div style="font-family:'IBM Plex Mono';font-size:10px;color:#9a9086;text-transform:uppercase;letter-spacing:.06em">customer</div><div style="font-family:'Space Grotesk';font-weight:600;font-size:14px;margin-top:4px">Active &amp; Repeat Customers</div></div>
+        </div>
+
+        <!-- opportunities -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:10px">
+          <div style="background:#fff;border:1px solid #e3ddd3;border-left:3px solid #6b8f4e;border-radius:10px;padding:16px 18px">
+            <div style="font-family:'Space Grotesk';font-weight:600;font-size:14.5px;margin-bottom:6px;color:#41632a">Opportunities visible in the data</div>
+            <ul style="margin:0;padding-left:17px;font-size:13px;color:#42392f;line-height:1.7">
+              <li>Quantify <strong>margin leakage</strong> (promo/FOC/compensation) by customer — likely a quick profit win.</li>
+              <li>Identify <strong>top-20 customers</strong> driving most margin (HORECA names like Metropole, InterContinental appear in AR).</li>
+              <li>Push <strong>Wagyu mix</strong> — highest price/kg category — where volume is low.</li>
+              <li>Rank <strong>sales reps</strong> on margin %, not just revenue.</li>
+            </ul>
+          </div>
+          <div style="background:#fff;border:1px solid #e3ddd3;border-left:3px solid #a23b3b;border-radius:10px;padding:16px 18px">
+            <div style="font-family:'Space Grotesk';font-weight:600;font-size:14.5px;margin-bottom:6px;color:#8a2f33">Risks / issues visible in the data</div>
+            <ul style="margin:0;padding-left:17px;font-size:13px;color:#42392f;line-height:1.7">
+              <li><strong>Negative net-sales values</strong> in Pivot — sign convention must be confirmed (returns vs sales).</li>
+              <li>Targets <strong>don't cover Jan–May 2025</strong> while invoices do → achievement % will look blank.</li>
+              <li>Sales-rep names <strong>"Ha" vs "Ha "</strong>, <strong>"Hoa" vs "Hoa "</strong> split a rep into two.</li>
+              <li>Customer concentration / credit risk overlaps with overdue AR.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 5 -->
+      <section id="s5" style="margin:0 0 70px;scroll-margin-top:24px">
+        <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:8px">
+          <span style="font-family:'IBM Plex Mono';font-size:13px;color:#7c2d33;font-weight:600">05</span>
+          <h2 style="font-family:'Space Grotesk';font-weight:600;font-size:28px;letter-spacing:-.01em;margin:0">Data quality check</h2>
+        </div>
+        <p style="color:#5c5147;max-width:72ch;margin:0 0 22px">Real issues found while reading the sheets — each with the Power Query fix. Clean these before modelling or every measure inherits the error.</p>
+
+        <div style="overflow-x:auto;border:1px solid #e3ddd3;border-radius:12px;background:#fff">
+          <table style="border-collapse:collapse;width:100%;font-size:12.5px;min-width:760px">
+            <thead><tr style="background:#f4efe7;text-align:left">
+              <th style="padding:10px 13px;font-family:'Space Grotesk';font-weight:600;border-bottom:1px solid #e3ddd3">Issue</th>
+              <th style="padding:10px 13px;font-family:'Space Grotesk';font-weight:600;border-bottom:1px solid #e3ddd3">Where</th>
+              <th style="padding:10px 13px;font-family:'Space Grotesk';font-weight:600;border-bottom:1px solid #e3ddd3">Severity</th>
+              <th style="padding:10px 13px;font-family:'Space Grotesk';font-weight:600;border-bottom:1px solid #e3ddd3">Power Query fix</th>
+            </tr></thead>
+            <tbody style="line-height:1.5">
+              <tr style="border-bottom:1px solid #efeae2"><td style="padding:9px 13px"><strong>Composite keys as "code, name"</strong></td><td style="padding:9px 13px">Invoice DEBTOR &amp; ITEM, Pivot Customer/Item</td><td style="padding:9px 13px"><span style="color:#a23b3b;font-weight:600">High</span></td><td style="padding:9px 13px;color:#5c5147">Split column by first comma → numeric <em>Code</em> + text <em>Name</em>; relate on Code.</td></tr>
+              <tr style="border-bottom:1px solid #efeae2"><td style="padding:9px 13px"><strong>Trailing-space duplicates</strong> ("Ha "/"Ha", "Hoa "/"Hoa", "Luyen ")</td><td style="padding:9px 13px">Master-debtor Salesrep</td><td style="padding:9px 13px"><span style="color:#a23b3b;font-weight:600">High</span></td><td style="padding:9px 13px;color:#5c5147">Trim + Clean; then Capitalize Each Word to standardise.</td></tr>
+              <tr style="border-bottom:1px solid #efeae2"><td style="padding:9px 13px"><strong>Category typo &amp; overlap</strong> ("Diary" vs "Dairy &amp; Egg"; "Beef"/"Wagyu"/"Mr. T. Beef")</td><td style="padding:9px 13px">Master-item Category</td><td style="padding:9px 13px"><span style="color:#b8860b;font-weight:600">Med</span></td><td style="padding:9px 13px;color:#5c5147">Map via a small reference table to a clean category list.</td></tr>
+              <tr style="border-bottom:1px solid #efeae2"><td style="padding:9px 13px"><strong>Temp-zone case/space chaos</strong> (d, D, f, F, "F ", c, C)</td><td style="padding:9px 13px">Master-item Temp zone</td><td style="padding:9px 13px"><span style="color:#b8860b;font-weight:600">Med</span></td><td style="padding:9px 13px;color:#5c5147">Upper + Trim → map D/F/C to Dry/Frozen/Chilled.</td></tr>
+              <tr style="border-bottom:1px solid #efeae2"><td style="padding:9px 13px"><strong>Item-type inconsistency</strong> ("Flank"/"FLank", "Striploin"/"Striploin ", "Oyster blade"/"Oyster Blade")</td><td style="padding:9px 13px">Master-item Itemtype</td><td style="padding:9px 13px"><span style="color:#b8860b;font-weight:600">Med</span></td><td style="padding:9px 13px;color:#5c5147">Trim + Proper-case; dedupe a curated list.</td></tr>
+              <tr style="border-bottom:1px solid #efeae2"><td style="padding:9px 13px"><strong>Date stored at 17:00 UTC</strong> (Vietnam UTC+7 → risk of day-shift)</td><td style="padding:9px 13px">Invoice/Pivot DATE</td><td style="padding:9px 13px"><span style="color:#a23b3b;font-weight:600">High</span></td><td style="padding:9px 13px;color:#5c5147">Convert to Date (drop time) after confirming timezone; type = Date.</td></tr>
+              <tr style="border-bottom:1px solid #efeae2"><td style="padding:9px 13px"><strong>Negative / blank values &amp; sign convention</strong></td><td style="padding:9px 13px">Pivot net-sales; Inventory Stock value</td><td style="padding:9px 13px"><span style="color:#a23b3b;font-weight:600">High</span></td><td style="padding:9px 13px;color:#5c5147">Confirm whether negatives = returns; standardise sign; replace null with 0 only where additive.</td></tr>
+              <tr style="border-bottom:1px solid #efeae2"><td style="padding:9px 13px"><strong>Empty / unclear columns</strong> (blank1, blank2; Check sheet)</td><td style="padding:9px 13px">Pivot, Check, Expdate (null headers)</td><td style="padding:9px 13px"><span style="color:#b8860b;font-weight:600">Med</span></td><td style="padding:9px 13px;color:#5c5147">Remove empty columns; rename null headers; don't load the Check QA sheet.</td></tr>
+              <tr style="border-bottom:1px solid #efeae2"><td style="padding:9px 13px"><strong>Mixed-language headers</strong> ("WH locatie", Debtor/Creditor)</td><td style="padding:9px 13px">Pivot, PO</td><td style="padding:9px 13px"><span style="color:#5b9a5b;font-weight:600">Low</span></td><td style="padding:9px 13px;color:#5c5147">Rename to consistent English for report-facing fields.</td></tr>
+              <tr><td style="padding:9px 13px"><strong>Wrong data types</strong> (numbers/dates read as text on import)</td><td style="padding:9px 13px">All sheets</td><td style="padding:9px 13px"><span style="color:#b8860b;font-weight:600">Med</span></td><td style="padding:9px 13px;color:#5c5147">Set explicit types as the first applied step on every query.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="font-size:12.5px;color:#9a9086;margin-top:12px">Duplicate <em>records</em>: check Invoice for repeated INVOICE#+ITEM+QTY lines (some appear legitimately split, e.g. qty 1 then qty 8 on the same invoice) — verify with the client before de-duplicating.</p>
+      </section>
+
+      <!-- SECTION 6 -->
+      <section id="s6" style="margin:0 0 70px;scroll-margin-top:24px">
+        <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:8px">
+          <span style="font-family:'IBM Plex Mono';font-size:13px;color:#7c2d33;font-weight:600">06</span>
+          <h2 style="font-family:'Space Grotesk';font-weight:600;font-size:28px;letter-spacing:-.01em;margin:0">Recommended Power BI data model</h2>
+        </div>
+        <p style="color:#5c5147;max-width:72ch;margin:0 0 22px"><strong>Star schema</strong>, single direction, one shared Date table. Facts in the middle, conformed dimensions around them, targets attached at their natural grain.</p>
+
+        <!-- schema diagram -->
+        <div data-om-raster="1" style="background:#211c18;border-radius:14px;padding:30px 26px;margin-bottom:22px;position:relative;overflow:hidden">
+          <div style="display:grid;grid-template-columns:1fr 1.3fr 1fr;gap:18px;align-items:center;position:relative;z-index:2">
+            <!-- left dims -->
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="background:#41632a;color:#eaf2e2;border-radius:8px;padding:9px 12px;font-size:12px"><strong>Dim_Customer</strong><br><span style="font-size:10.5px;color:#bcd3a9;font-family:'IBM Plex Mono'">Master-debtor · rep, region, channel</span></div>
+              <div style="background:#41632a;color:#eaf2e2;border-radius:8px;padding:9px 12px;font-size:12px"><strong>Dim_Product</strong><br><span style="font-size:10.5px;color:#bcd3a9;font-family:'IBM Plex Mono'">Master-item · cat, brand, grade</span></div>
+              <div style="background:#41632a;color:#eaf2e2;border-radius:8px;padding:9px 12px;font-size:12px"><strong>Dim_Supplier</strong><br><span style="font-size:10.5px;color:#bcd3a9;font-family:'IBM Plex Mono'">Master-supplier</span></div>
+            </div>
+            <!-- center facts -->
+            <div style="display:flex;flex-direction:column;gap:10px;align-items:center">
+              <div style="background:#7c2d33;color:#fff;border-radius:8px;padding:11px 14px;font-size:12.5px;width:100%;text-align:center;box-shadow:0 0 0 3px rgba(124,45,51,.25)"><strong>Fact_Sales (Pivot)</strong><br><span style="font-size:10.5px;color:#f0cfca;font-family:'IBM Plex Mono'">net sales · margin · type</span></div>
+              <div style="background:#9c3a41;color:#fff;border-radius:8px;padding:11px 14px;font-size:12.5px;width:100%;text-align:center"><strong>Fact_Invoice</strong><br><span style="font-size:10.5px;color:#f0cfca;font-family:'IBM Plex Mono'">orders · price · qty</span></div>
+              <div style="background:#3a5a78;color:#fff;border-radius:8px;padding:9px 12px;font-size:12px;width:100%;text-align:center"><strong>Fact_Inventory</strong> · <strong>Fact_PO</strong><br><span style="font-size:10.5px;color:#cfe0ee;font-family:'IBM Plex Mono'">stock · expiry · receipts</span></div>
+              <div style="background:#5b5048;color:#fff;border-radius:8px;padding:9px 12px;font-size:12px;width:100%;text-align:center"><strong>Fact_AR</strong> <span style="font-size:10.5px;color:#d6cdc2;font-family:'IBM Plex Mono'">(aging snapshot)</span></div>
+            </div>
+            <!-- right -->
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="background:#8a6d1f;color:#fbf3df;border-radius:8px;padding:9px 12px;font-size:12px"><strong>Dim_Date</strong><br><span style="font-size:10.5px;color:#e6d4a4;font-family:'IBM Plex Mono'">marked date table</span></div>
+              <div style="background:#8a6d1f;color:#fbf3df;border-radius:8px;padding:9px 12px;font-size:12px"><strong>Targets</strong><br><span style="font-size:10.5px;color:#e6d4a4;font-family:'IBM Plex Mono'">company / rep / region</span></div>
+              <div style="background:#3b3531;color:#d6cdc2;border-radius:8px;padding:9px 12px;font-size:12px"><strong>RLS_Users / Pages</strong><br><span style="font-size:10.5px;color:#a99e92;font-family:'IBM Plex Mono'">security layer</span></div>
+            </div>
+          </div>
+          <div style="text-align:center;color:#9a8e80;font-size:11px;font-family:'IBM Plex Mono';margin-top:18px;position:relative;z-index:2">all relationships single-direction → from dimension (1) to fact (∗) · Date filters every fact &amp; target</div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:12px;padding:18px 20px">
+            <div style="font-family:'Space Grotesk';font-weight:600;font-size:15px;margin-bottom:8px">Keys &amp; relationships</div>
+            <ul style="margin:0;padding-left:17px;font-size:13px;color:#42392f;line-height:1.75">
+              <li><strong>Dim_Customer[DebtorCode]</strong> 1→∗ Fact_Sales / Fact_Invoice / Fact_AR</li>
+              <li><strong>Dim_Product[Itemcode]</strong> 1→∗ Fact_Sales / Invoice / Inventory / PO</li>
+              <li><strong>Dim_Supplier[SupplierCode]</strong> 1→∗ Inventory / PO / Product</li>
+              <li><strong>Dim_Date[Date]</strong> 1→∗ every fact &amp; every target table</li>
+              <li>Targets join on Date (+ rep/region key) — at month grain, so use a Month key or relate Date(month-start).</li>
+            </ul>
+          </div>
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:12px;padding:18px 20px">
+            <div style="font-family:'Space Grotesk';font-weight:600;font-size:15px;margin-bottom:8px">Modelling decisions</div>
+            <ul style="margin:0;padding-left:17px;font-size:13px;color:#42392f;line-height:1.75">
+              <li>Build a dedicated <strong>Dim_Date</strong> (CALENDAR), mark as date table — don't rely on auto date/time.</li>
+              <li>Pick <strong>one</strong> sales fact as the revenue source of truth (recommend Pivot); keep the other for detail, don't double-count.</li>
+              <li>Inventory &amp; AR are <strong>snapshots</strong> — relate to Date as "as-of", don't sum across time.</li>
+              <li>RLS tables drive security roles, not visuals — wire Users→Pages with role filters.</li>
+              <li>Region Sales mixes geography + channel — split into <strong>Region</strong> and <strong>Channel</strong> attributes.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 7 -->
+      <section id="s7" style="margin:0 0 70px;scroll-margin-top:24px">
+        <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:8px">
+          <span style="font-family:'IBM Plex Mono';font-size:13px;color:#7c2d33;font-weight:600">07</span>
+          <h2 style="font-family:'Space Grotesk';font-weight:600;font-size:28px;letter-spacing:-.01em;margin:0">Dashboard pages</h2>
+        </div>
+        <p style="color:#5c5147;max-width:72ch;margin:0 0 24px">Four dashboards. Sales is specced deepest (it's the lead prototype); others are scoped to what the data supports today.</p>
+
+        <!-- B. SALES (lead) -->
+        <div style="background:#fff;border:1px solid #e3ddd3;border-top:4px solid #7c2d33;border-radius:14px;padding:24px 26px;margin-bottom:18px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+            <span style="background:#7c2d33;color:#fff;font-family:'Space Grotesk';font-weight:600;width:26px;height:26px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;font-size:14px">B</span>
+            <h3 style="font-family:'Space Grotesk';font-weight:600;font-size:20px;margin:0">Sales Performance Dashboard</h3>
+            <span style="font-family:'IBM Plex Sans';font-size:11px;color:#7c2d33;background:#f6e3e0;padding:3px 9px;border-radius:20px">lead prototype · multi-page</span>
+          </div>
+          <p style="font-size:13px;color:#5c5147;margin:6px 0 16px"><strong>Objective:</strong> deeply analyse sales performance, profitability and growth across product, customer, region and rep. <strong>Target user:</strong> Sales Director, regional managers, commercial team.</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;font-size:13px">
+            <div>
+              <div style="font-family:'IBM Plex Mono';font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#7c2d33;margin-bottom:6px">Pages</div>
+              <ul style="margin:0 0 14px;padding-left:17px;color:#42392f;line-height:1.7">
+                <li><strong>B1 Sales Overview</strong> — KPIs, revenue-vs-target trend, region &amp; channel mix</li>
+                <li><strong>B2 Product &amp; Brand</strong> — category/brand/Wagyu performance, top &amp; bottom items</li>
+                <li><strong>B3 Customer</strong> — top customers, contribution, new vs repeat, concentration</li>
+                <li><strong>B4 Rep &amp; Region</strong> — rep leaderboard, target achievement, region map</li>
+                <li><strong>B5 Margin &amp; Leakage</strong> — promo / FOC / compensation drain by customer</li>
+              </ul>
+              <div style="font-family:'IBM Plex Mono';font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#7c2d33;margin-bottom:6px">Filters / slicers</div>
+              <p style="margin:0;color:#42392f">Date range · Region · Channel · Category/Brand · Sales rep · Customer · Transaction type</p>
+            </div>
+            <div>
+              <div style="font-family:'IBM Plex Mono';font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#7c2d33;margin-bottom:6px">Key KPIs</div>
+              <p style="margin:0 0 14px;color:#42392f">Revenue · Margin · Margin % · Volume (kg) · Orders · AOV · Target Achievement % · MoM/YoY Growth · Wagyu share · Promo+FOC %</p>
+              <div style="font-family:'IBM Plex Mono';font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#7c2d33;margin-bottom:6px">Recommended visuals</div>
+              <p style="margin:0 0 14px;color:#42392f">KPI cards w/ target deltas · revenue-vs-target combo (column + line) · region map · category treemap · rep bar leaderboard · top/bottom-N tables · margin-leakage waterfall · customer scatter (revenue × margin %)</p>
+              <div style="font-family:'IBM Plex Mono';font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#7c2d33;margin-bottom:6px">Insight expected</div>
+              <p style="margin:0;color:#42392f">Where growth/margin is won or lost, who the profit-driving customers &amp; reps are, and how much margin promotions cost.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- A. Overall -->
+        <div style="background:#fff;border:1px solid #e3ddd3;border-top:4px solid #2a211e;border-radius:14px;padding:22px 24px;margin-bottom:16px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+            <span style="background:#2a211e;color:#fff;font-family:'Space Grotesk';font-weight:600;width:26px;height:26px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;font-size:14px">A</span>
+            <h3 style="font-family:'Space Grotesk';font-weight:600;font-size:19px;margin:0">Business Overall (Executive) Dashboard</h3>
+          </div>
+          <p style="font-size:13px;color:#5c5147;margin:6px 0 12px"><strong>Objective:</strong> one-screen health of the company. <strong>Target user:</strong> GM / owners / board.</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;font-size:12.5px;color:#42392f">
+            <div><div style="font-family:'IBM Plex Mono';font-size:10px;text-transform:uppercase;color:#9a9086;margin-bottom:4px">KPIs</div>Revenue &amp; Margin vs target · Growth % · Volume · AR outstanding · Stock value</div>
+            <div><div style="font-family:'IBM Plex Mono';font-size:10px;text-transform:uppercase;color:#9a9086;margin-bottom:4px">Visuals</div>KPI band · trend vs target · region/channel mix · department comparison · cash &amp; stock tiles</div>
+            <div><div style="font-family:'IBM Plex Mono';font-size:10px;text-transform:uppercase;color:#9a9086;margin-bottom:4px">Filters</div>Date · Region · Channel</div>
+          </div>
+        </div>
+
+        <!-- C. Accounting -->
+        <div style="background:#fff;border:1px solid #e3ddd3;border-top:4px solid #3a5a78;border-radius:14px;padding:22px 24px;margin-bottom:16px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+            <span style="background:#3a5a78;color:#fff;font-family:'Space Grotesk';font-weight:600;width:26px;height:26px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;font-size:14px">C</span>
+            <h3 style="font-family:'Space Grotesk';font-weight:600;font-size:19px;margin:0">Accounting / Receivables Dashboard</h3>
+            <span style="font-family:'IBM Plex Sans';font-size:11px;color:#3a5a78;background:#e4edf4;padding:3px 9px;border-radius:20px">AR-only scope</span>
+          </div>
+          <p style="font-size:13px;color:#5c5147;margin:6px 0 12px"><strong>Objective:</strong> monitor receivables &amp; credit risk. <strong>Target user:</strong> Finance / collections.</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;font-size:12.5px;color:#42392f">
+            <div><div style="font-family:'IBM Plex Mono';font-size:10px;text-transform:uppercase;color:#9a9086;margin-bottom:4px">KPIs</div>Total AR · % overdue · &gt;90-day exposure · avg terms · top debtors</div>
+            <div><div style="font-family:'IBM Plex Mono';font-size:10px;text-transform:uppercase;color:#9a9086;margin-bottom:4px">Visuals</div>Aging stacked bar · overdue heat table · top-20 debtors · risk by channel</div>
+            <div><div style="font-family:'IBM Plex Mono';font-size:10px;text-transform:uppercase;color:#9a9086;margin-bottom:4px">Filters</div>Classification · Channel · Aging bucket</div>
+          </div>
+        </div>
+
+        <!-- D. Warehouse -->
+        <div style="background:#fff;border:1px solid #e3ddd3;border-top:4px solid #3a5a78;border-radius:14px;padding:22px 24px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+            <span style="background:#3a5a78;color:#fff;font-family:'Space Grotesk';font-weight:600;width:26px;height:26px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;font-size:14px">D</span>
+            <h3 style="font-family:'Space Grotesk';font-weight:600;font-size:19px;margin:0">Warehouse / Inventory Dashboard</h3>
+          </div>
+          <p style="font-size:13px;color:#5c5147;margin:6px 0 12px"><strong>Objective:</strong> protect stock value &amp; manage expiry. <strong>Target user:</strong> Ops / warehouse / procurement.</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;font-size:12.5px;color:#42392f">
+            <div><div style="font-family:'IBM Plex Mono';font-size:10px;text-transform:uppercase;color:#9a9086;margin-bottom:4px">KPIs</div>Stock value by WH · available vs reserved · near-expiry value · negative-stock count · open PO value</div>
+            <div><div style="font-family:'IBM Plex Mono';font-size:10px;text-transform:uppercase;color:#9a9086;margin-bottom:4px">Visuals</div>Stock-value treemap · expiry aging calendar · exception list · PO pipeline timeline</div>
+            <div><div style="font-family:'IBM Plex Mono';font-size:10px;text-transform:uppercase;color:#9a9086;margin-bottom:4px">Filters</div>Warehouse · Category · Supplier · Expiry window</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 8 -->
+      <section id="s8" style="margin:0 0 70px;scroll-margin-top:24px">
+        <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:8px">
+          <span style="font-family:'IBM Plex Mono';font-size:13px;color:#7c2d33;font-weight:600">08</span>
+          <h2 style="font-family:'Space Grotesk';font-weight:600;font-size:28px;letter-spacing:-.01em;margin:0">Wireframes</h2>
+        </div>
+        <p style="color:#5c5147;max-width:72ch;margin:0 0 24px">Low-fi layout sketches. The Sales Overview is rendered client-ready; the others are structural. Grey blocks = visuals to be built.</p>
+
+        <!-- SALES B1 WIREFRAME (client-ready) -->
+        <div style="font-family:'IBM Plex Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#7c2d33;margin-bottom:8px">B1 · Sales Overview — client-ready</div>
+        <div style="border:1px solid #cfc7bb;border-radius:12px;background:#f3f0ea;padding:14px;margin-bottom:18px">
+          <!-- header bar -->
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#fff;border:1px solid #e1dacf;border-radius:8px;padding:10px 14px;margin-bottom:10px">
+            <div style="font-family:'Space Grotesk';font-weight:600;font-size:14px">Sales Performance · Overview</div>
+            <div style="display:flex;gap:6px">
+              <span style="font-size:10px;font-family:'IBM Plex Mono';background:#efeae2;border:1px solid #ddd5c8;border-radius:5px;padding:3px 8px;color:#6b635a">Date ▾</span>
+              <span style="font-size:10px;font-family:'IBM Plex Mono';background:#efeae2;border:1px solid #ddd5c8;border-radius:5px;padding:3px 8px;color:#6b635a">Region ▾</span>
+              <span style="font-size:10px;font-family:'IBM Plex Mono';background:#efeae2;border:1px solid #ddd5c8;border-radius:5px;padding:3px 8px;color:#6b635a">Channel ▾</span>
+              <span style="font-size:10px;font-family:'IBM Plex Mono';background:#efeae2;border:1px solid #ddd5c8;border-radius:5px;padding:3px 8px;color:#6b635a">Rep ▾</span>
+            </div>
+          </div>
+          <!-- KPI row -->
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:10px">
+            <div style="background:#fff;border:1px solid #e1dacf;border-radius:8px;padding:11px"><div style="font-size:9.5px;font-family:'IBM Plex Mono';color:#9a9086;text-transform:uppercase">Revenue</div><div style="height:16px;background:#e6ded2;border-radius:3px;margin-top:6px"></div><div style="height:8px;width:55%;background:#cfe0d0;border-radius:3px;margin-top:5px"></div></div>
+            <div style="background:#fff;border:1px solid #e1dacf;border-radius:8px;padding:11px"><div style="font-size:9.5px;font-family:'IBM Plex Mono';color:#9a9086;text-transform:uppercase">Margin %</div><div style="height:16px;background:#e6ded2;border-radius:3px;margin-top:6px"></div><div style="height:8px;width:45%;background:#cfe0d0;border-radius:3px;margin-top:5px"></div></div>
+            <div style="background:#fff;border:1px solid #e1dacf;border-radius:8px;padding:11px"><div style="font-size:9.5px;font-family:'IBM Plex Mono';color:#9a9086;text-transform:uppercase">vs Target</div><div style="height:16px;background:#e6ded2;border-radius:3px;margin-top:6px"></div><div style="height:8px;width:60%;background:#f0d2cd;border-radius:3px;margin-top:5px"></div></div>
+            <div style="background:#fff;border:1px solid #e1dacf;border-radius:8px;padding:11px"><div style="font-size:9.5px;font-family:'IBM Plex Mono';color:#9a9086;text-transform:uppercase">Orders / AOV</div><div style="height:16px;background:#e6ded2;border-radius:3px;margin-top:6px"></div><div style="height:8px;width:50%;background:#e6ded2;border-radius:3px;margin-top:5px"></div></div>
+            <div style="background:#fff;border:1px solid #e1dacf;border-radius:8px;padding:11px"><div style="font-size:9.5px;font-family:'IBM Plex Mono';color:#9a9086;text-transform:uppercase">Wagyu share</div><div style="height:16px;background:#e6ded2;border-radius:3px;margin-top:6px"></div><div style="height:8px;width:40%;background:#e6ded2;border-radius:3px;margin-top:5px"></div></div>
+          </div>
+          <!-- main row -->
+          <div style="display:grid;grid-template-columns:2fr 1fr;gap:10px;margin-bottom:10px">
+            <div style="background:#fff;border:1px solid #e1dacf;border-radius:8px;padding:12px;height:150px;display:flex;flex-direction:column">
+              <div style="font-size:10px;font-family:'IBM Plex Mono';color:#6b635a;margin-bottom:8px">Revenue vs Target — monthly (column + line)</div>
+              <div style="flex:1;display:flex;align-items:flex-end;gap:7px;padding:0 4px">
+                <div style="flex:1;background:#c9d7e2;height:55%;border-radius:3px 3px 0 0"></div>
+                <div style="flex:1;background:#c9d7e2;height:72%;border-radius:3px 3px 0 0"></div>
+                <div style="flex:1;background:#c9d7e2;height:48%;border-radius:3px 3px 0 0"></div>
+                <div style="flex:1;background:#c9d7e2;height:80%;border-radius:3px 3px 0 0"></div>
+                <div style="flex:1;background:#c9d7e2;height:65%;border-radius:3px 3px 0 0"></div>
+                <div style="flex:1;background:#c9d7e2;height:90%;border-radius:3px 3px 0 0"></div>
+                <div style="flex:1;background:#c9d7e2;height:70%;border-radius:3px 3px 0 0"></div>
+              </div>
+            </div>
+            <div style="background:#fff;border:1px solid #e1dacf;border-radius:8px;padding:12px;height:150px">
+              <div style="font-size:10px;font-family:'IBM Plex Mono';color:#6b635a;margin-bottom:8px">Region / channel mix</div>
+              <div style="display:flex;align-items:center;justify-content:center;height:100px">
+                <div style="width:88px;height:88px;border-radius:50%;background:conic-gradient(#7c2d33 0 38%,#c8643f 38% 62%,#3a5a78 62% 82%,#6b8f4e 82% 100%)"></div>
+              </div>
+            </div>
+          </div>
+          <!-- bottom row -->
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+            <div style="background:#fff;border:1px solid #e1dacf;border-radius:8px;padding:12px;height:118px">
+              <div style="font-size:10px;font-family:'IBM Plex Mono';color:#6b635a;margin-bottom:8px">Top categories (bar)</div>
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <div style="height:9px;width:92%;background:#dfd8cc;border-radius:3px"></div>
+                <div style="height:9px;width:74%;background:#dfd8cc;border-radius:3px"></div>
+                <div style="height:9px;width:58%;background:#dfd8cc;border-radius:3px"></div>
+                <div style="height:9px;width:41%;background:#dfd8cc;border-radius:3px"></div>
+                <div style="height:9px;width:30%;background:#dfd8cc;border-radius:3px"></div>
+              </div>
+            </div>
+            <div style="background:#fff;border:1px solid #e1dacf;border-radius:8px;padding:12px;height:118px">
+              <div style="font-size:10px;font-family:'IBM Plex Mono';color:#6b635a;margin-bottom:8px">Rep leaderboard (table)</div>
+              <div style="display:flex;flex-direction:column;gap:5px">
+                <div style="display:flex;gap:6px"><div style="height:8px;flex:1;background:#e6ded2;border-radius:2px"></div><div style="height:8px;width:30px;background:#dfd8cc;border-radius:2px"></div></div>
+                <div style="display:flex;gap:6px"><div style="height:8px;flex:1;background:#e6ded2;border-radius:2px"></div><div style="height:8px;width:30px;background:#dfd8cc;border-radius:2px"></div></div>
+                <div style="display:flex;gap:6px"><div style="height:8px;flex:1;background:#e6ded2;border-radius:2px"></div><div style="height:8px;width:30px;background:#dfd8cc;border-radius:2px"></div></div>
+                <div style="display:flex;gap:6px"><div style="height:8px;flex:1;background:#e6ded2;border-radius:2px"></div><div style="height:8px;width:30px;background:#dfd8cc;border-radius:2px"></div></div>
+              </div>
+            </div>
+            <div style="background:#fff;border:1px solid #e1dacf;border-radius:8px;padding:12px;height:118px">
+              <div style="font-size:10px;font-family:'IBM Plex Mono';color:#6b635a;margin-bottom:8px">Customer scatter (rev × margin%)</div>
+              <div style="position:relative;height:78px;border-left:1px solid #e1dacf;border-bottom:1px solid #e1dacf">
+                <span style="position:absolute;left:18%;top:55%;width:8px;height:8px;background:#7c2d33;border-radius:50%;opacity:.5"></span>
+                <span style="position:absolute;left:42%;top:30%;width:11px;height:11px;background:#7c2d33;border-radius:50%;opacity:.5"></span>
+                <span style="position:absolute;left:62%;top:60%;width:7px;height:7px;background:#3a5a78;border-radius:50%;opacity:.5"></span>
+                <span style="position:absolute;left:78%;top:22%;width:13px;height:13px;background:#6b8f4e;border-radius:50%;opacity:.5"></span>
+                <span style="position:absolute;left:30%;top:70%;width:6px;height:6px;background:#c8643f;border-radius:50%;opacity:.5"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- text wireframes for other pages -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:12px;padding:16px 18px">
+            <div style="font-family:'Space Grotesk';font-weight:600;font-size:14px;margin-bottom:8px">B5 · Margin &amp; Leakage <span style="font-weight:400;color:#9a9086;font-size:11px">(Sales — signature page)</span></div>
+            <pre style="font-family:'IBM Plex Mono';font-size:11.5px;color:#42392f;margin:0;white-space:pre-wrap;line-height:1.6">TOP   ▸ Net Sales · Gross Sales · Leakage % · FOC value
+MID   ▸ Waterfall: Gross → promo → FOC → comp → Net
+      ▸ Leakage by customer (bar, top offenders)
+BOT   ▸ Detail table: customer × type × VND × margin
+      ▸ Drillthrough → customer 360</pre>
+          </div>
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:12px;padding:16px 18px">
+            <div style="font-family:'Space Grotesk';font-weight:600;font-size:14px;margin-bottom:8px">A · Executive Overview</div>
+            <pre style="font-family:'IBM Plex Mono';font-size:11.5px;color:#42392f;margin:0;white-space:pre-wrap;line-height:1.6">TOP   ▸ Revenue/Margin vs target · Growth · AR · Stock
+MID   ▸ Revenue-vs-target trend (combo)
+      ▸ Region map · channel mix
+BOT   ▸ Department comparison · cash &amp; stock tiles</pre>
+          </div>
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:12px;padding:16px 18px">
+            <div style="font-family:'Space Grotesk';font-weight:600;font-size:14px;margin-bottom:8px">C · Accounting / AR</div>
+            <pre style="font-family:'IBM Plex Mono';font-size:11.5px;color:#42392f;margin:0;white-space:pre-wrap;line-height:1.6">TOP   ▸ Total AR · % overdue · &gt;90d · avg terms
+MID   ▸ Aging stacked bar · risk by channel
+BOT   ▸ Top-20 debtors table · overdue exceptions</pre>
+          </div>
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:12px;padding:16px 18px">
+            <div style="font-family:'Space Grotesk';font-weight:600;font-size:14px;margin-bottom:8px">D · Warehouse / Inventory</div>
+            <pre style="font-family:'IBM Plex Mono';font-size:11.5px;color:#42392f;margin:0;white-space:pre-wrap;line-height:1.6">TOP   ▸ Stock value · available vs reserved · near-expiry
+MID   ▸ Stock-value treemap · expiry aging calendar
+BOT   ▸ Negative-stock exceptions · open-PO pipeline</pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 9 -->
+      <section id="s9" style="margin:0 0 70px;scroll-margin-top:24px">
+        <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:8px">
+          <span style="font-family:'IBM Plex Mono';font-size:13px;color:#7c2d33;font-weight:600">09</span>
+          <h2 style="font-family:'Space Grotesk';font-weight:600;font-size:28px;letter-spacing:-.01em;margin:0">DAX measures (Sales-first)</h2>
+        </div>
+        <div style="background:#fbf6ea;border:1px solid #ead9b8;border-radius:10px;padding:12px 16px;font-size:12.5px;color:#8a4a1f;margin-bottom:20px">
+          Assumes <code style="font-family:'IBM Plex Mono'">Fact_Sales</code> = cleaned Pivot, <code style="font-family:'IBM Plex Mono'">Fact_Invoice</code> = cleaned Invoice, conformed <code style="font-family:'IBM Plex Mono'">Dim_Date</code>. Replace negative-sign on net sales once the convention is confirmed (wrap in <code style="font-family:'IBM Plex Mono'">ABS()</code> or negate as agreed).
+        </div>
+
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px">
+
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:10px;padding:15px 17px;min-width:0">
+            <div style="font-family:'Space Grotesk';font-weight:600;font-size:14px">Total Sales</div>
+            <div style="font-size:12px;color:#6b635a;margin:3px 0 8px">Net revenue, all transaction types · KPI cards, every trend.</div>
+            <pre style="font-family:'IBM Plex Mono';font-size:11.5px;background:#f4efe7;border-radius:7px;padding:10px 12px;margin:0;overflow-x:auto;color:#2a211e">Total Sales =
+SUM ( Fact_Sales[total - vnd] )</pre>
+          </div>
+
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:10px;padding:15px 17px">
+            <div style="font-family:'Space Grotesk';font-weight:600;font-size:14px">Total Margin &amp; Margin %</div>
+            <div style="font-size:12px;color:#6b635a;margin:3px 0 8px">Profit and profitability · KPI cards, rep/customer ranking.</div>
+            <pre style="font-family:'IBM Plex Mono';font-size:11.5px;background:#f4efe7;border-radius:7px;padding:10px 12px;margin:0;overflow-x:auto;color:#2a211e">Total Margin = SUM ( Fact_Sales[Total Margin] )
+Margin % = DIVIDE ( [Total Margin], [Total Sales] )</pre>
+          </div>
+
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:10px;padding:15px 17px">
+            <div style="font-family:'Space Grotesk';font-weight:600;font-size:14px">Total Orders &amp; Volume</div>
+            <div style="font-size:12px;color:#6b635a;margin:3px 0 8px">Order count &amp; kg sold · overview KPIs.</div>
+            <pre style="font-family:'IBM Plex Mono';font-size:11.5px;background:#f4efe7;border-radius:7px;padding:10px 12px;margin:0;overflow-x:auto;color:#2a211e">Total Orders = DISTINCTCOUNT ( Fact_Invoice[INVOICE#] )
+Total Volume (kg) = SUM ( Fact_Sales[total - q] )</pre>
+          </div>
+
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:10px;padding:15px 17px">
+            <div style="font-family:'Space Grotesk';font-weight:600;font-size:14px">Average Order Value / Price per Kg</div>
+            <div style="font-size:12px;color:#6b635a;margin:3px 0 8px">Basket &amp; pricing efficiency · KPI cards, customer page.</div>
+            <pre style="font-family:'IBM Plex Mono';font-size:11.5px;background:#f4efe7;border-radius:7px;padding:10px 12px;margin:0;overflow-x:auto;color:#2a211e">Avg Order Value = DIVIDE ( [Total Sales], [Total Orders] )
+Avg Price / Kg  = DIVIDE ( [Total Sales], [Total Volume (kg)] )</pre>
+          </div>
+
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:10px;padding:15px 17px">
+            <div style="font-family:'Space Grotesk';font-weight:600;font-size:14px">Revenue Target &amp; Achievement %</div>
+            <div style="font-size:12px;color:#6b635a;margin:3px 0 8px">Goal vs actual · target gauges, vs-target combo chart.</div>
+            <pre style="font-family:'IBM Plex Mono';font-size:11.5px;background:#f4efe7;border-radius:7px;padding:10px 12px;margin:0;overflow-x:auto;color:#2a211e">Revenue Target = SUM ( Targets[Revenue target VND] )
+Target Achievement % =
+DIVIDE ( [Total Sales], [Revenue Target] )</pre>
+          </div>
+
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:10px;padding:15px 17px">
+            <div style="font-family:'Space Grotesk';font-weight:600;font-size:14px">MoM &amp; YoY Growth %</div>
+            <div style="font-size:12px;color:#6b635a;margin:3px 0 8px">Momentum · trend tooltips, growth KPI. <em>YoY needs ≥13 months.</em></div>
+            <pre style="font-family:'IBM Plex Mono';font-size:11.5px;background:#f4efe7;border-radius:7px;padding:10px 12px;margin:0;overflow-x:auto;color:#2a211e">Sales MoM % =
+VAR Prev = CALCULATE ( [Total Sales],
+    DATEADD ( Dim_Date[Date], -1, MONTH ) )
+RETURN DIVIDE ( [Total Sales] - Prev, Prev )
+
+Sales YoY % =
+VAR Prev = CALCULATE ( [Total Sales],
+    DATEADD ( Dim_Date[Date], -1, YEAR ) )
+RETURN DIVIDE ( [Total Sales] - Prev, Prev )</pre>
+          </div>
+
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:10px;padding:15px 17px">
+            <div style="font-family:'Space Grotesk';font-weight:600;font-size:14px">MTD &amp; YTD Sales</div>
+            <div style="font-size:12px;color:#6b635a;margin:3px 0 8px">Period-to-date · executive &amp; overview headers.</div>
+            <pre style="font-family:'IBM Plex Mono';font-size:11.5px;background:#f4efe7;border-radius:7px;padding:10px 12px;margin:0;overflow-x:auto;color:#2a211e">MTD Sales = TOTALMTD ( [Total Sales], Dim_Date[Date] )
+YTD Sales = TOTALYTD ( [Total Sales], Dim_Date[Date] )</pre>
+          </div>
+
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:10px;padding:15px 17px">
+            <div style="font-family:'Space Grotesk';font-weight:600;font-size:14px">Sales Contribution %</div>
+            <div style="font-size:12px;color:#6b635a;margin:3px 0 8px">Share of total (works on any dimension) · mix bars, treemaps.</div>
+            <pre style="font-family:'IBM Plex Mono';font-size:11.5px;background:#f4efe7;border-radius:7px;padding:10px 12px;margin:0;overflow-x:auto;color:#2a211e">Sales Contribution % =
+DIVIDE ( [Total Sales],
+    CALCULATE ( [Total Sales], ALLSELECTED () ) )</pre>
+          </div>
+
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:10px;padding:15px 17px;grid-column:span 2;border-left:3px solid #7c2d33">
+            <div style="font-family:'Space Grotesk';font-weight:600;font-size:14px">Margin Leakage — promo / FOC / compensation <span style="font-weight:400;color:#7c2d33;font-size:11px">★ signature measure</span></div>
+            <div style="font-size:12px;color:#6b635a;margin:3px 0 8px">Revenue given away vs regular sales · the Margin &amp; Leakage page. Unique to this dataset.</div>
+            <pre style="font-family:'IBM Plex Mono';font-size:11.5px;background:#f4efe7;border-radius:7px;padding:10px 12px;margin:0;overflow-x:auto;color:#2a211e">Regular Sales = SUM ( Fact_Sales[regular sales - vnd] )
+Promo+FOC Value =
+SUM ( Fact_Sales[promo - vnd] ) + SUM ( Fact_Sales[FOC - vnd] )
+    + SUM ( Fact_Sales[compensation - vnd] )
+Leakage % of Sales =
+DIVIDE ( [Promo+FOC Value], [Regular Sales] )</pre>
+          </div>
+
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:10px;padding:15px 17px">
+            <div style="font-family:'Space Grotesk';font-weight:600;font-size:14px">Wagyu Revenue Share</div>
+            <div style="font-size:12px;color:#6b635a;margin:3px 0 8px">Premium-mix push · overview KPI, product page.</div>
+            <pre style="font-family:'IBM Plex Mono';font-size:11.5px;background:#f4efe7;border-radius:7px;padding:10px 12px;margin:0;overflow-x:auto;color:#2a211e">Wagyu Revenue Share =
+DIVIDE (
+  CALCULATE ( [Total Sales], Dim_Product[Category] = "Wagyu" ),
+  [Total Sales] )</pre>
+          </div>
+
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:10px;padding:15px 17px">
+            <div style="font-family:'Space Grotesk';font-weight:600;font-size:14px">Active &amp; Repeat Customers</div>
+            <div style="font-size:12px;color:#6b635a;margin:3px 0 8px">Customer base &amp; retention · customer page.</div>
+            <pre style="font-family:'IBM Plex Mono';font-size:11.5px;background:#f4efe7;border-radius:7px;padding:10px 12px;margin:0;overflow-x:auto;color:#2a211e">Active Customers =
+DISTINCTCOUNT ( Fact_Sales[DebtorCode] )
+
+Repeat Customers =
+COUNTROWS ( FILTER ( VALUES ( Dim_Customer[DebtorCode] ),
+    CALCULATE ( DISTINCTCOUNT ( Fact_Invoice[INVOICE#] ) ) > 1 ) )</pre>
+          </div>
+
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:10px;padding:15px 17px">
+            <div style="font-family:'Space Grotesk';font-weight:600;font-size:14px">Customer Contribution % (Pareto)</div>
+            <div style="font-size:12px;color:#6b635a;margin:3px 0 8px">Who drives the revenue · top-N table, concentration.</div>
+            <pre style="font-family:'IBM Plex Mono';font-size:11.5px;background:#f4efe7;border-radius:7px;padding:10px 12px;margin:0;overflow-x:auto;color:#2a211e">Customer Contribution % =
+DIVIDE ( [Total Sales],
+  CALCULATE ( [Total Sales], ALL ( Dim_Customer ) ) )</pre>
+          </div>
+
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:10px;padding:15px 17px">
+            <div style="font-family:'Space Grotesk';font-weight:600;font-size:14px">AR Outstanding &amp; % Overdue</div>
+            <div style="font-size:12px;color:#6b635a;margin:3px 0 8px">Cash health · accounting + executive pages.</div>
+            <pre style="font-family:'IBM Plex Mono';font-size:11.5px;background:#f4efe7;border-radius:7px;padding:10px 12px;margin:0;overflow-x:auto;color:#2a211e">Total AR = SUM ( Fact_AR[Total amount] )
+% Overdue 90+ =
+DIVIDE ( SUM ( Fact_AR[>90] ), [Total AR] )</pre>
+          </div>
+
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:10px;padding:15px 17px">
+            <div style="font-family:'Space Grotesk';font-weight:600;font-size:14px">Near-Expiry Stock Value</div>
+            <div style="font-size:12px;color:#6b635a;margin:3px 0 8px">Spoilage risk · warehouse page.</div>
+            <pre style="font-family:'IBM Plex Mono';font-size:11.5px;background:#f4efe7;border-radius:7px;padding:10px 12px;margin:0;overflow-x:auto;color:#2a211e">Near-Expiry Value =
+CALCULATE ( SUM ( Fact_Inventory[Stock value] ),
+  Expdate[End] <= TODAY () + 30 )</pre>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- SECTION 10 -->
+      <section id="s10" style="margin:0 0 70px;scroll-margin-top:24px">
+        <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:8px">
+          <span style="font-family:'IBM Plex Mono';font-size:13px;color:#7c2d33;font-weight:600">10</span>
+          <h2 style="font-family:'Space Grotesk';font-weight:600;font-size:28px;letter-spacing:-.01em;margin:0">Power Query transformation steps</h2>
+        </div>
+        <p style="color:#5c5147;max-width:72ch;margin:0 0 22px">An ordered recipe — applied per query, then the model is wired in §6.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+          <ol style="margin:0;padding-left:20px;font-size:13.5px;color:#42392f;line-height:1.95">
+            <li><strong>Connect</strong> each sheet as its own query; promote headers.</li>
+            <li><strong>Set data types</strong> explicitly as step 1 (Date, Decimal, Whole, Text).</li>
+            <li><strong>Remove empty rows &amp; columns</strong> (blank1, blank2, null-header cols).</li>
+            <li><strong>Trim + Clean</strong> all text key columns (Salesrep, Category, Itemtype, Temp zone).</li>
+            <li><strong>Split composite keys</strong> "code, name" → Code (number) + Name (text) by first delimiter.</li>
+            <li><strong>Standardise text</strong>: Capitalize Each Word; map Temp zone to Dry/Frozen/Chilled.</li>
+          </ol>
+          <ol start="7" style="margin:0;padding-left:20px;font-size:13.5px;color:#42392f;line-height:1.95">
+            <li><strong>Mapping tables</strong> for category clean-up ("Diary"→"Dairy") via Merge.</li>
+            <li><strong>Fix dates</strong>: convert datetime→Date (resolve UTC+7 shift first).</li>
+            <li><strong>Confirm sign</strong> on Pivot net-sales / Inventory value; standardise.</li>
+            <li><strong>Remove duplicates</strong> on master keys only (after trim).</li>
+            <li><strong>Create Dim_Date</strong> (CALENDAR / List.Dates) covering all facts + targets; mark as date table.</li>
+            <li><strong>Split Region/Channel</strong> out of "Region Sales"; <strong>don't load</strong> the Check sheet.</li>
+          </ol>
+        </div>
+        <p style="font-size:12.5px;color:#9a9086;margin-top:14px">Append only if more monthly files arrive in the same shape; Merge is for enriching facts with master attributes if you prefer flattening over relationships (relationships recommended here).</p>
+      </section>
+
+      <!-- SECTION 11 -->
+      <section id="s11" style="margin:0 0 70px;scroll-margin-top:24px">
+        <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:8px">
+          <span style="font-family:'IBM Plex Mono';font-size:13px;color:#7c2d33;font-weight:600">11</span>
+          <h2 style="font-family:'Space Grotesk';font-weight:600;font-size:28px;letter-spacing:-.01em;margin:0">Build priority</h2>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;gap:16px;background:#fff;border:1px solid #e3ddd3;border-left:4px solid #7c2d33;border-radius:10px;padding:16px 18px">
+            <div style="font-family:'Space Grotesk';font-weight:700;font-size:20px;color:#7c2d33;min-width:64px">P1</div>
+            <div><strong style="font-family:'Space Grotesk'">Sales Dashboard.</strong> <span style="color:#5c5147;font-size:13.5px">Richest, cleanest data (two fact tables + full dimensions + multi-level targets), it's the client's stated focus, and it carries a unique margin-leakage angle that demos extremely well. Fastest path to visible value.</span></div>
+          </div>
+          <div style="display:flex;gap:16px;background:#fff;border:1px solid #e3ddd3;border-left:4px solid #2a211e;border-radius:10px;padding:16px 18px">
+            <div style="font-family:'Space Grotesk';font-weight:700;font-size:20px;color:#2a211e;min-width:64px">P2</div>
+            <div><strong style="font-family:'Space Grotesk'">Business Overall Dashboard.</strong> <span style="color:#5c5147;font-size:13.5px">Reuses the Sales measures plus AR &amp; inventory roll-ups — cheap to build once Sales exists, and it's what leadership asks for first.</span></div>
+          </div>
+          <div style="display:flex;gap:16px;background:#fff;border:1px solid #e3ddd3;border-left:4px solid #3a5a78;border-radius:10px;padding:16px 18px">
+            <div style="font-family:'Space Grotesk';font-weight:700;font-size:20px;color:#3a5a78;min-width:64px">P3</div>
+            <div><strong style="font-family:'Space Grotesk'">Warehouse Dashboard.</strong> <span style="color:#5c5147;font-size:13.5px">High operational value (expiry &amp; stock-value risk on perishables) but snapshot-only data; useful even without history.</span></div>
+          </div>
+          <div style="display:flex;gap:16px;background:#fff;border:1px solid #e3ddd3;border-left:4px solid #5b5048;border-radius:10px;padding:16px 18px">
+            <div style="font-family:'Space Grotesk';font-weight:700;font-size:20px;color:#5b5048;min-width:64px">P4</div>
+            <div><strong style="font-family:'Space Grotesk'">Accounting / AR Dashboard.</strong> <span style="color:#5c5147;font-size:13.5px">Quick win but narrow (aging snapshot only). Best folded into the executive page until more finance data arrives.</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 12 -->
+      <section id="s12" style="margin:0 0 50px;scroll-margin-top:24px">
+        <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:8px">
+          <span style="font-family:'IBM Plex Mono';font-size:13px;color:#7c2d33;font-weight:600">12</span>
+          <h2 style="font-family:'Space Grotesk';font-weight:600;font-size:28px;letter-spacing:-.01em;margin:0">Final recommendation</h2>
+        </div>
+
+        <div style="background:#211c18;color:#f3ece2;border-radius:14px;padding:26px 28px;margin-bottom:20px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+            <div>
+              <div style="font-family:'IBM Plex Mono';font-size:11px;color:#e0a07f;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">What this data is</div>
+              <p style="margin:0 0 16px;font-size:13.5px;color:#d8ccbd">A premium imported-meat &amp; seafood distributor in Vietnam (Wagyu-led, HORECA + retail). The workbook is already a near-complete Power BI source: facts, dimensions, targets and RLS.</p>
+              <div style="font-family:'IBM Plex Mono';font-size:11px;color:#e0a07f;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Build first &amp; why</div>
+              <p style="margin:0;font-size:13.5px;color:#d8ccbd"><strong style="color:#fff">Sales</strong> — best data, client priority, and a standout margin-leakage story competitors' dashboards rarely show.</p>
+            </div>
+            <div>
+              <div style="font-family:'IBM Plex Mono';font-size:11px;color:#e0a07f;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Most important KPIs</div>
+              <p style="margin:0 0 16px;font-size:13.5px;color:#d8ccbd">Revenue &amp; Margin vs Target, Margin %, Growth, Wagyu share, Promo/FOC leakage, Top customers &amp; reps by margin.</p>
+              <div style="font-family:'IBM Plex Mono';font-size:11px;color:#e0a07f;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Fix before building</div>
+              <p style="margin:0;font-size:13.5px;color:#d8ccbd">Composite keys, sales-rep trailing spaces, category typos, the date UTC shift, and the Pivot/Invoice double-count + sign convention.</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div style="background:#fff;border:1px solid #e3ddd3;border-radius:12px;padding:18px 20px">
+            <div style="font-family:'Space Grotesk';font-weight:600;font-size:15px;margin-bottom:8px">Data that would level it up</div>
+            <ul style="margin:0;padding-left:17px;font-size:13px;color:#42392f;line-height:1.7">
+              <li>≥13 months history (true YoY)</li>
+              <li>Targets for the full date range (Jan–May 2025 gap)</li>
+              <li>List price / discount to measure true discounting</li>
+              <li>Dated stock-movement ledger (turnover, trend)</li>
+              <li>AP &amp; cash to round out finance</li>
+              <li>Customer first-order / onboarding dates</li>
+            </ul>
+          </div>
+          <div style="background:#fff;border:1px solid #e3ddd3;border-left:3px solid #7c2d33;border-radius:12px;padding:18px 20px">
+            <div style="font-family:'Space Grotesk';font-weight:600;font-size:15px;margin-bottom:8px">Questions to ask the client first</div>
+            <ol style="margin:0;padding-left:18px;font-size:13px;color:#42392f;line-height:1.7">
+              <li>Is <strong>Pivot</strong> or <strong>Invoice</strong> the official sales number? How do they differ?</li>
+              <li>Why are net-sales values <strong>negative</strong> — sign convention or returns?</li>
+              <li>How far back does history go / will this refresh monthly?</li>
+              <li>Confirm the leading numeric code is the true key in each master.</li>
+              <li>What does each transaction type mean (FOC, compensation, sponsor, authorities)?</li>
+              <li>Who sees what? (validate the RLS Users/Pages mapping)</li>
+              <li>Currency display — VND, or VND + USD reporting view?</li>
+            </ol>
+          </div>
+        </div>
+
+        <p style="text-align:center;font-family:'IBM Plex Mono';font-size:11px;color:#a99e92;margin-top:34px;letter-spacing:.05em">PREPARED AS A DASHBOARD-SCOPING DELIVERABLE · READ DIRECTLY FROM MASTERFILE · FIGURES TO BE VALIDATED WITH CLIENT</p>
+      </section>
+
+    </main>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>
